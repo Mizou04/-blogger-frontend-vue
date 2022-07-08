@@ -1,0 +1,75 @@
+<template>
+  <header class="header">
+    <a href="/"><img src="" alt="logo" class="header--logo"/></a>
+    <template v-if="layoutStore.isDesktop">
+      <Navbar/>
+      <div class="header--actions">
+        <router-link to="/login" v-slot="{navigate}">
+          <button  @click="navigate" class="header--login">
+            Get Started!
+          </button>
+        </router-link>
+      </div>
+    </template>
+    <template v-else>
+      <Menu class="header--burger"></Menu>
+      <Teleport v-if="layoutStore.drawerIsOpen" :to="body">
+        <Drawer></Drawer>
+      </Teleport>
+    </template>
+  </header>
+</template>
+
+<script lang="ts" setup>
+  import Navbar from "./Nav-bar-v.vue"
+  import {Menu} from "mdue"
+  import {ref, reactive, onMounted, onUnmounted} from "vue"
+  import useLayoutStore from "@/store/layout.store"
+  import Drawer from "./drawer.vue"
+
+  let layoutStore = useLayoutStore();
+  let body = document.body;
+  const drawerHandler = (e : MouseEvent)=>{
+      if(!layoutStore.drawerIsOpen && (e.target as HTMLElement).classList.contains("header--burger")){
+        return layoutStore.openDrawer();
+      }
+      if(layoutStore.drawerIsOpen && !(e.target as HTMLElement).classList.contains("drawer" || "drawer-disabled")){
+        return layoutStore.closeDrawer();
+      }
+    }
+
+  onMounted(()=>{
+    window.addEventListener('click', drawerHandler)
+  })
+  onUnmounted(()=>{
+    window.removeEventListener('click', drawerHandler)
+  })
+
+</script>
+
+<style lang="scss" scoped>
+  @import "@/views/scss/scheme";
+  .header{
+    box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.046);
+    display  : flex;
+    justify-content: space-between;
+    align-items: center;
+    height : 50px;
+    padding : 0px 7px;
+    &--logo{
+      width : 20px;
+      height : 20px;
+    }
+    &--burger{
+      height : 1.4em;
+      width : 1.4em;
+    }
+    &--login{
+      padding : 7px 45px;
+      background : $buttons--color-cta;
+      color : white;
+      border : none;
+      box-shadow : 0px 2px 4px rgba(0, 0, 9, 0.146);
+    }
+  }
+</style>

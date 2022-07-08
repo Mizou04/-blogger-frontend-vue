@@ -1,27 +1,30 @@
-<template>
+<template lang="html">
   <div>
-    <!-- <home-page-vue></home-page-vue> -->
-    <!-- <h1>hello</h1> -->
-    <Userform/>
+    <Header/>
+    <router-view class="router-view">
+    </router-view>
 
   </div>
 </template>
 
 <script setup lang="ts">
-  import { defineComponent } from 'vue';
-  import Userform from "./views/components/RegisterForm.vue"
+  import Header from "./views/components/header.vue"
+  import useLayoutStore from "@/store/layout.store"
+  import {onMounted, onUnmounted, ref, reactive} from "vue"
 
+  let layoutStore = ref(useLayoutStore())
 
-  // export default {
-  //   components : {
-  //     Userform
-  //   },
-  //   setup() {
-  //     return {
-  //       Userform
-  //     }
-  //   },
-  // }
+  function toggleDesktop(e: UIEvent){
+    layoutStore.value.toggleDesktop();
+  }
+
+  onMounted(()=>{
+    window.addEventListener("resize", toggleDesktop, false);
+  })
+  onUnmounted(()=>{
+    window.removeEventListener("resize", toggleDesktop, false)
+  })
+
 </script>
 
 <style lang="scss">
@@ -33,13 +36,13 @@
   body{
     width : 100vw;
     height : 100vh;
+    font-size: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serifi;
   }
-
   #app{
-    background: red;
     width: 100%;
     height: 100%;
   }
-
+ 
 
 </style>

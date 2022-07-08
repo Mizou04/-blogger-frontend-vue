@@ -1,0 +1,11 @@
+$buttons--color-active : linear-gradient(to bottom, rgb(19, 19, 25), rgb(16, 17, 23));
+$buttons--color-cta : linear-gradient(to bottom, rgb(0, 194, 10), rgb(16, 173, 23));
+
+.button--cta{
+  background : $buttons--color-cta;
+ 
+  color: white;
+  font-weight: 600;
+  font-size: 1.2em;
+  padding: 5px 20px;
+}
