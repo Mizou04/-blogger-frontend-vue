@@ -4,52 +4,133 @@
     </a>
   <form @submit.prevent="" class="form form-login" v-if="isLogin">
     <h2 class="form--title">Login</h2>
-    <label for="email">
-      <input type="email" name="email" placeholder="example@example.co" id="email" class="form--input form--input-email">
+    <label class="form--label" for="email">
+      <input required v-model="loginState.email" type="email" name="email" placeholder="example@example.co" id="email" :class="`form--input form--input-email ${msg.email ? 'invalidInput' : ''}`">
+      <span v-if="msg.email">{{msg.email}}*</span>
     </label>
-    <label for="password">
-      <input type="password" autocomplete="current-password" name="password" placeholder="*********" id="password" class="form--input form--input-password">
+    <label class="form--label" for="password">
+      <input required v-model="loginState.password" type="password" autocomplete="current-password" name="password" placeholder="*********" id="password" :class="`form--input form--input-password ${msg.password ? 'invalidInput' : ''}`">
+      <span v-if="msg.password">{{msg.password}}*</span>
     </label>
-    <button class="form--submit">Login</button>
+    <button type="submit" class="form--submit">Login</button>
   </form>
   <form @submit.prevent="" class="form form-signup" v-else>
-    <h2 class="form--title">Sign in</h2>
-    <label for="username">
-      <input type="username" name="username" placeholder="username" id="username" class="form--input form--input-username">
+    <h2 class="form--title">Sign up</h2>
+    <label for="username" class="form--label form--label-username">
+      <input required v-model="signUpState.username" type="username" name="username" placeholder="username" id="username" :class="`form--input form--input-username ${msg.username ? 'invalidInput' : ''}`">
+      <span v-if="msg.username">{{msg.username}}*</span>
     </label>
-    <label for="name">
-      <input type="name" name="name" placeholder="name" id="name" class="form--input form--input-name">
+    <label for="name"  class="form--label form--label-name">
+      <input required v-model="signUpState.name"  type="name" name="name" placeholder="name" id="name" :class="`form--input form--input-name ${msg.name ? 'invalidInput' : ''}`">
+      <span v-if="msg.name">{{msg.name}}*</span>
     </label>
-    <label for="email">
-      <input type="email" name="email" placeholder="example@example.co"  id="email" class="form--input form--input-email">
+    <label class="form--label form--label-email" for="email">
+      <input required v-model="signUpState.email"  name="email" id="email" placeholder="example@example.com" :class="`form--input form--input-email ${msg.email ? 'invalidInput' : ''}`">
+      <span v-if="msg.email">{{msg.email}}*</span>
     </label>
-    <label for="password">
-      <input type="password" autocomplete="current-password" name="password" placeholder="*********" id="password" class="form--input form--input-password">
+    <label for="password" class="form--label form--label-password">
+      <input required v-model="signUpState.password" type="password" autocomplete="current-password" name="password" placeholder="*********" id="password" :class="`form--input form--input-password ${msg.password ? 'invalidInput' : ''}`">
+      <span v-if="msg.password">{{msg.password}}*</span>
     </label>
-    <label title="password:" for="re_password">
-      <input type="password" name="re_password" placeholder="*********" id="re_password" class="form--input form--input-re_password">
+    <label class="form--label form--label-re_password" for="re_password">
+      <input required v-model="signUpState.rePassword"  type="password" name="re_password" placeholder="*********" id="re_password" :class="`form--input form--input-re_password  ${msg.rePassword ? 'invalidInput' : ''}`">
+      <span v-if="msg.rePassword">{{msg.rePassword}}*</span>
     </label>
-    <button class="form--submit">Sign up</button>
+    <button type="submit" class="form--submit">Sign up</button>
   </form>
   {{isLogin ? "don't have account yet? " : "already have an account? " }} <router-link :to="isLogin ? '/signup' : '/login'">{{isLogin ? "sign up" : "login"}}</router-link>
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive, onMounted, onUnmounted, watch } from "vue";
+  import { ref, reactive, onMounted, onUnmounted, watch, Ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
+  import validate from "validator";
   
   let route = useRoute();
   let isLogin = ref(route.path.match('login'));
+  let msg : {[ket : string] : string} = {};
+    
+  let signUpState = reactive({
+    username : "",
+    name : "",
+    email : "",
+    password : "",
+    rePassword : ""
+  })
+  let loginState = reactive<{email : string, password : string}>({
+    email : "",
+    password : "",
+  });
 
   watch(()=> route.path, (newPath)=>{
     if(newPath.match('login')){
       isLogin.value = newPath.match('login');
+      signUpState.email = "";
+      signUpState.username = "";
+      signUpState.password = "";
+      signUpState.rePassword = "";
     } else if(newPath.match('signup')){
       isLogin.value = newPath.match('login');
-    }
-  });
+      loginState.email = "";
+      loginState.password = "";
+  }
+});
 
+
+  watch(loginState, (newState)=>{
+    validateLoginInput(newState);
+  })
   
+  watch(signUpState, (newState)=>{
+    validateSignupInput(newState);
+})
+
+  function validateSignupInput(e : typeof signUpState){
+    let {email, username, name, password, rePassword} = e;
+    if(!validate.isEmail(email) && email.length > 0){
+      msg.email = "invalid email adress"
+    } else {
+      delete msg.email
+    }
+
+    if(password.length < 6 && password.length > 0){
+      msg.password = "password too short"
+    } else {
+      delete msg.password
+    }
+    if(username.length < 4 && username.length > 0){
+      msg.username = "username too short"
+    } else {
+      delete msg.username
+    }
+    if(name.length < 4 && name.length > 0){
+      msg.name = "name too short"
+    } else {
+      delete msg.name
+    }
+    if(password && rePassword !== password){
+      msg.rePassword = "please checkout your password"
+    } else {
+      delete msg.rePassword;
+    }
+  }
+
+  function validateLoginInput(e : typeof loginState){
+    let {email, password} = e;
+    if(!validate.isEmail(email) && email.length > 0){
+      msg.email = "invalid email adress"
+    } else {
+      delete msg.email
+    }
+
+    if(password.length < 6 && password.length > 0){
+      msg.password = "password too short"
+    } else {
+      delete msg.password
+    }
+  }
+  
+
 
 </script> 
 
@@ -112,6 +193,21 @@
       background : white;
       border-radius: 5px;
     }  
+  &--label{
+    position : relative;
+    span{
+      color : blue;
+      position : absolute;
+      bottom : -50%;
+      left : 0px;
+      width : 100%;
+      font-size : .8em;
+    }
+  }
+  }
+  .invalidInput{
+      border : 1px red solid;
+      outline : 1px red solid;
   }
 
 </style>
