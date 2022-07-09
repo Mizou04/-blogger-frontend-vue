@@ -13,9 +13,7 @@
     </template>
     <template v-else>
       <Menu class="header--burger"></Menu>
-      <Teleport v-if="layoutStore.drawerIsOpen" :to="body">
-        <Drawer></Drawer>
-      </Teleport>
+      <Drawer :isOpen="layoutStore.drawerIsOpen"></Drawer>
     </template>
   </header>
 </template>
@@ -28,7 +26,7 @@
   import Drawer from "./drawer.vue"
 
   let layoutStore = useLayoutStore();
-  let body = document.body;
+
   const drawerHandler = (e : MouseEvent)=>{
       if(!layoutStore.drawerIsOpen && (e.target as HTMLElement).classList.contains("header--burger")){
         return layoutStore.openDrawer();
@@ -72,4 +70,34 @@
       box-shadow : 0px 2px 4px rgba(0, 0, 9, 0.146);
     }
   }
+  .drawer_transition-leave-active{
+    transition : all .04s .05s ease; 
+    animation : bounce-in 0.5s reverse;
+  }
+  .drawer_transition-enter-active{
+    transition : all 0.3s 0s linear;
+    animation : bounce-in 0.5s reverse;
+  }
+  .drawer_transition-enter-from, .drawer_transition-leave-to{
+    left : -100%;
+    opacity : 0;
+  }
+
+  .drawer_transition-enter-to{
+    left : 0;
+    opacity : 1;
+  }
+
+  @keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+  }
+
 </style>

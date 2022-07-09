@@ -1,7 +1,5 @@
 <template lang="html">
-    <a href="/google">
-      <button class="form--google">Login with Google</button>
-    </a>
+    <SocialButton social="google"/>
   <form @submit="submitHandler" :class="`form form-${isLogin ? 'login' : 'signup'}`">
     <h2 class="form--title">{{isLogin? 'login' : 'Sign up'}}</h2>
     <label v-if="!isLogin" for="username" class="form--label form--label-username">
@@ -26,14 +24,15 @@
     </label>
     <button type="submit" class="form--submit">{{isLogin ? 'login' : 'Sign up'}}</button>
   </form>
-  {{isLogin ? "don't have account yet? " : "already have an account? " }} <router-link :to="isLogin ? '/signup' : '/login'">{{isLogin ? "sign up" : "login"}}</router-link>
+  {{isLogin ? "don't have account yet? " : "already have an account? " }} <router-link :to="isLogin ? '/signup' : '/login'" replace>{{isLogin ? "sign up" : "login"}}</router-link>
 </template>
 
 <script lang="ts" setup>
   import { ref, reactive, onMounted, onUnmounted, watch, Ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import validate from "validator";
-  
+  import SocialButton from "@/views/components/social-button.vue"
+
   let route = useRoute();
   let isLogin = ref(route.path.match('login'));
   let msg : {[ket : string] : string} = {};
@@ -174,34 +173,17 @@
         box-shadow : unset;
       }
     }
-    &--google{
-      border : 2px black solid;
-      width : min(400px, 80%);
-      padding : 10px;
+    &--label{
       position : relative;
-      margin : auto;
-      font-size: 1.4em;
-      font-weight: 700;
-      background : white;
-      border-radius: 5px;
-      cursor : pointer;
-      box-shadow: 1px 2px 5px rgba(16, 17, 23, 0.164);
-      transition : all 0.3s 0s ease;
-      &:hover{
-        box-shadow: unset;
+      span{
+        color : blue;
+        position : absolute;
+        bottom : -50%;
+        left : 0px;
+        width : 100%;
+        font-size : .8em;
       }
-    }  
-  &--label{
-    position : relative;
-    span{
-      color : blue;
-      position : absolute;
-      bottom : -50%;
-      left : 0px;
-      width : 100%;
-      font-size : .8em;
     }
-  }
   }
   .invalidInput{
       border : 1px red solid;

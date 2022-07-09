@@ -1,18 +1,20 @@
 <template lang="html">
-  <transition name="transition">
-    <div class="drawer">
-      <div class="drawer--content">
-        <Navbar/>
-        <div class="drawer--actions">
-          <router-link to="/login" v-slot="{navigate}">
-            <button  @click="navigate" class="drawer--login">
-              Get started!
-            </button>
-          </router-link>
+  <Teleport :to="body">
+      <Transition name="drawer_transition">        
+        <div v-if="isOpen" class="drawer">
+          <div class="drawer--content">
+            <Navbar/>
+            <div class="drawer--actions">
+              <router-link to="/login" v-slot="{navigate}">
+                <button  @click="navigate" class="drawer--login">
+                  Get started!
+                </button>
+              </router-link>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </transition>
+      </Transition>
+    </Teleport>
 </template>
 
 
@@ -20,6 +22,10 @@
   import Navbar from "./Nav-bar-v.vue"
   import {ref, defineProps, onMounted, onUnmounted} from "vue"
   import useLayoutStore from "@/store/layout.store"
+  
+  let body = document.body;
+
+  defineProps<{isOpen : boolean}>()
 
 </script>
 
@@ -56,30 +62,26 @@
     }
   }
   
-  .transition-leave-active{
+  .drawer_transition-leave-active{
     transition : all .04s .05s ease; 
-    animation : bounce-in 0.5s reverse;
   }
-  .transition-enter-active{
+  .drawer_transition-enter-active{
     transition : all 0.3s 0s linear;
-    animation : bounce-in 0.5s reverse;
   }
-  .transition-enter-from, .transition-leave-to{
+  .drawer_transition-enter-from, .drawer_transition-leave-to{
     left : -100%;
     opacity : 0;
   }
 
-  .transition-enter-to{
+  .drawer_transition-enter-to{
     left : 0;
     opacity : 1;
+    animation : bounce-in 0.5s;
   }
 
   @keyframes bounce-in {
   0% {
     transform: scale(0);
-  }
-  50% {
-    transform: scale(1.25);
   }
   100% {
     transform: scale(1);
