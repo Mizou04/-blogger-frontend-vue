@@ -1,12 +1,12 @@
 <template lang="html">
     <SocialButton social="google"/>
-  <form @submit="submitHandler" :class="`form form-${isLogin ? 'login' : 'signup'}`">
-    <h2 class="form--title">{{isLogin? 'login' : 'Sign up'}}</h2>
-    <label v-if="!isLogin" for="username" class="form--label form--label-username">
+  <form @submit="submitHandler" :class="`form form-${isLoginPage ? 'login' : 'signup'}`">
+    <h2 class="form--title">{{isLoginPage? 'login' : 'Sign up'}}</h2>
+    <label v-if="!isLoginPage" for="username" class="form--label form--label-username">
       <input ref="usernameRef" required v-model="formState.username" type="username" name="username" placeholder="username" id="username" :class="`form--input form--input-username ${msg.username ? 'invalidInput' : ''}`">
       <span v-if="msg.username">{{msg.username}}*</span>
     </label>
-    <label v-if="!isLogin" for="name" class="form--label form--label-name">
+    <label v-if="!isLoginPage" for="name" class="form--label form--label-name">
       <input ref="nameRef" required v-model="formState.name"  type="name" name="name" placeholder="name" id="name" :class="`form--input form--input-name ${msg.name ? 'invalidInput' : ''}`">
       <span v-if="msg.name">{{msg.name}}*</span>
     </label>
@@ -18,13 +18,13 @@
       <input ref="passwordRef" required v-model="formState.password" type="password" autocomplete="current-password" name="password" placeholder="*********" id="password" :class="`form--input form--input-password ${msg.password ? 'invalidInput' : ''}`">
       <span v-if="msg.password">{{msg.password}}*</span>
     </label>
-    <label v-if="!isLogin" class="form--label form--label-re_password" for="re_password">
+    <label v-if="!isLoginPage" class="form--label form--label-re_password" for="re_password">
       <input ref="rePasswordRef" required v-model="formState.rePassword"  type="password" name="re_password" placeholder="*********" id="re_password" :class="`form--input form--input-re_password  ${msg.rePassword ? 'invalidInput' : ''}`">
       <span v-if="msg.rePassword">{{msg.rePassword}}*</span>
     </label>
-    <button type="submit" class="form--submit">{{isLogin ? 'login' : 'Sign up'}}</button>
+    <button type="submit" class="form--submit">{{isLoginPage ? 'login' : 'Sign up'}}</button>
   </form>
-  {{isLogin ? "don't have account yet? " : "already have an account? " }} <router-link :to="isLogin ? '/signup' : '/login'" replace>{{isLogin ? "sign up" : "login"}}</router-link>
+  {{isLoginPage ? "don't have account yet? " : "already have an account? " }} <router-link :to="isLoginPage ? '/signup' : '/login'" replace>{{isLoginPage ? "sign up" : "login"}}</router-link>
 </template>
 
 <script lang="ts" setup>
@@ -32,9 +32,11 @@
   import { useRoute, useRouter } from "vue-router";
   import validate from "validator";
   import SocialButton from "@/views/components/social-button.vue"
+  import userStore from "@/store/user.store";
 
   let route = useRoute();
-  let isLogin = ref(route.path.match('login'));
+  let loginStore = userStore();
+  let isLoginPage = ref(route.path.match('login'));
   let msg : {[ket : string] : string} = {};
     
   let formState = reactive({
@@ -53,9 +55,9 @@
 
   watch(()=> route.path, (newPath)=>{
     if(newPath.match('login')){
-      isLogin.value = newPath.match('login');
+      isLoginPage.value = newPath.match('login');
     } else if(newPath.match('signup')){
-      isLogin.value = newPath.match('login');
+      isLoginPage.value = newPath.match('login');
     }
       formState.email = "";
       formState.name = "";
@@ -70,6 +72,8 @@
 })
 
   function validateFormInput(e : typeof formState){
+    loginStore.loginError = false;
+    loginStore.loginErrorMsg = "";
     let {email, username, name, password, rePassword} = e;
     if(!validate.isEmail(email) && email.length > 0){
       msg.email = "invalid email adress"
@@ -130,24 +134,24 @@
   .form{
     height : 60vh;
     width : min(400px, 80vw);
-    text-align: start;
-    // background-color: red;
+    /* text-align: start; */
     margin: auto;
     &--title{
       margin: 7px auto;
       margin-left: 10px;
-      font-size: 1.5em;
+      font-size: 1.2em;
+      width : 100%;
     }
-    &-login{
-      padding: 20px 30px;
+    &-login, &-signup{
+      padding: 20px 120px;
     }
-    & label{
+    &--label{
       width : 100%;
       text-align: center;
     }
     &--input{
       position : relative;
-      width : 90%;
+      width : min(80vw, 400px);
       padding: 10px 15px;
       margin: 0px auto 9px auto;
       transform: translateX(-50%);
@@ -156,15 +160,17 @@
     }
     &--submit{
       position: relative;
-      padding : 10px 35px;
-      width: 70%;
+      padding : 6px 15px;
+      display : flex;
+      justify-content: center;
+      width : min(60vw, 300px);
       margin: 15px auto;
       transform: translateX(-50%);
       left : 50%;
       color : white;
       font-weight: 100;
-      font-size: 1.1em;
-      background : $buttons--color-cta;
+      font-size: .9em;
+      background : $buttons--color-active;
       border : 1px rgba(255, 255, 255, 0.333) solid;
       box-shadow : 1px 2px 10px 2px rgba(16, 17, 23, 0.164);
       transition : all 0.123s 0s ease-in;

@@ -46,7 +46,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import "@/views/scss/scheme";
+  @use "@/views/scss/scheme" as S;
   .header{
     box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.046);
     display  : flex;
@@ -54,6 +54,7 @@
     align-items: center;
     height : 50px;
     padding : 0px 7px;
+    box-shadow: S.$shadow;
     &--logo{
       width : 20px;
       height : 20px;
@@ -64,7 +65,7 @@
     }
     &--login{
       padding : 7px 45px;
-      background : $buttons--color-cta;
+      background : S.$buttons--color-cta;
       color : white;
       border : none;
       box-shadow : 0px 2px 4px rgba(0, 0, 9, 0.146);
@@ -76,7 +77,7 @@
   }
   .drawer_transition-enter-active{
     transition : all 0.3s 0s linear;
-    animation : bounce-in 0.5s reverse;
+    // animation : bounce-in 0.5s reverse;
   }
   .drawer_transition-enter-from, .drawer_transition-leave-to{
     left : -100%;
@@ -90,13 +91,13 @@
 
   @keyframes bounce-in {
   0% {
-    transform: scale(0);
+    transform: scale(5);
   }
   50% {
-    transform: scale(1.25);
+    transform: scale(.7);
   }
   100% {
-    transform: scale(1);
+    transform: scale(0);
   }
   }
 

@@ -1,17 +1,33 @@
 <template lang="html">
-  <router-link :to="'/' + social">
-    <button :class="`button--social ${social ? 'button--social-'+social : ''}`">Login with {{social}}</button>
-  </router-link>
+  <button @click.prevent="clickHandler" :class="`button--social ${state.social ? 'button--social-'+state.social : ''}`">Login with {{social}}</button>
 </template>
 
 <script lang="ts" setup>
-  import {defineProps} from "vue"
+  import {defineProps, ref, onMounted, onUnmounted, watch} from "vue";
+  import {useRoute, useRouter} from "vue-router"
+  import userStore from "@/store/user.store";
+  import {User} from "@/types/user"
 
-  defineProps<{social : string}>()
+  const state = defineProps<{social : "google" | "facebook"}>();
+  let popupWindow : Window;
+  const popupWindowParams = "scrollbars=1,height=600,width=500,titlebar=1,menubar=1,top=30";
+  
+  const router = useRouter();
+  const store = userStore();
+  const urls = store.urls;
 
   function clickHandler(e : MouseEvent){
-    window.open(process.env.product)
+    store.setLoginError(false);
+    store.setLoginErrorMsg("");
+    if(state.social == "google"){
+      popupWindow = window.open(store.urls.google, "_blank", popupWindowParams) as Window;
+      if(!popupWindow?.opener){
+        popupWindow.opener = window;
+        popupWindow.focus();
+      }
+    }
   }
+  
 
 </script>
 
