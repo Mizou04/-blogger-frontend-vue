@@ -53,6 +53,7 @@
     justify-content: space-between;
     align-items: center;
     height : 50px;
+    width : 100%;
     padding : 0px 7px;
     box-shadow: S.$shadow;
     &--logo{

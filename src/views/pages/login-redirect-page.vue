@@ -13,37 +13,17 @@
   const store = useUserStore();
   const router = useRouter();
 
-  onMounted(async ()=>{
-    try {
-      const response = await opener?.fetch("http://localhost:4000/me", {method : "GET"});
-      //if response has an ID means we have a User
-      const resJson : User | string = await response.json();
-      opener.console.log(resJson);
-      if((resJson as User).id){
-        store.setUser(resJson as User);
-        opener.console.log("resJson");
-        opener.localStorage.setItem("user",JSON.stringify(resJson));
-        // opener.history.push()
-        router.replace("/");
-      //else we have Error login instead
-      } else {
-        store.setLoginError(true);
-        store.setLoginErrorMsg(resJson as string);
-        router.replace("/");
-        setTimeout(() => {
-          store.loginError = false;
-          store.loginErrorMsg = "";
-        }, 10000);
-      }
-    } catch (error) {
-      store.setLoginError(true);
-      store.setLoginErrorMsg((error as Error).message);
-      opener.console.log((error as Error).stack);
+  onMounted(()=> {
+    try{
+      store.getUserCredentials();
+    } catch(e){
+      console.log(e)
     }
     setTimeout(() => {
       window.close();
     }, 3000);
-  })
+    }
+  )
   // onMounted(()=>{
   //   try {
   //     opener?.console.log("hello")
@@ -51,6 +31,41 @@
   //     console.log(error)
   //   }
   // })
-
+// async getUserCredentials() : Promise<void>{
+//   let currentWindow = (opener || window);
+//   let HttpClient = new HTTPClient(currentWindow)
+//   try {
+//     const response = await HttpClient.call("http://localhost:4000/me", {method : "GET"});
+//     currentWindow.console.log(response);
+//     //if response has an ID means we have a User
+//     if((response as User).id){
+//       this.setUser(response as User);
+//       currentWindow.console.log("response : ", response);
+//       storeUser(currentWindow, response);
+//       if(opener){
+//         window.close();
+//       }
+//       currentWindow.history.replace('/');
+//       // router.replace("/");
+//     //else we have Error login instead
+//     } else {
+//       this.setLoginError(true);
+//       this.setLoginErrorMsg(response as string);
+//       if(opener){
+//         window.close();
+//       }
+//       // router.replace("/login");
+//       currentWindow.history.replace('/');
+//       setTimeout(() => {
+//         this.loginError = false;
+//         this.loginErrorMsg = "";
+//       }, 10000);
+//     }
+//     } catch (error) {
+//       this.setLoginError(true);
+//       this.setLoginErrorMsg((error as Error).message);
+//       currentWindow.console.log((error as Error).stack);
+//     }
+//   }
 
 </script>
