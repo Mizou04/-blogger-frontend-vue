@@ -4,12 +4,8 @@ export class HTTPClient{
     this.targetWindow = targetWindow
   }
   async call(url : string, options : RequestInit){
-    try{
-      let res = await this.targetWindow.fetch(url, options);
-      let json = res.json();
+      const res = await this.targetWindow.fetch(url, options);
+      const json = res.json();
       return json;
-    } catch (e){
-      throw e
-    }
   }
 }

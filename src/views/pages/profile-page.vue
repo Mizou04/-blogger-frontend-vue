@@ -1,12 +1,12 @@
 <template lang="html">
   <div class="profile">
-    <img :src="userPic" alt="" class="profile--cover" v-if="userPic">
+    <img :src="userCoverPic" alt="" class="profile--cover" v-if="userCoverPic">
     <div class="profile--cover" :style="{background : coverColor}" v-else></div>
     <div class="profile--card">
-      <h3 class="profile--name">{{props.user.name}}</h3>
+      <h3 class="profile--name">{{user?.name}}</h3>
       <img src="" alt="" class="profile--pic">
       <p class="profile--status">Lorem ipsum dolor sit amet consectetur adipisicing.</p>
-      <p class="profile--joined">{{props.user.joinedAt}}</p>
+      <p class="profile--joined">member since {{new Date(user?.joinedAt!).getUTCMonth() + "/" + new Date(user?.joinedAt!).getUTCFullYear()}}</p>
     </div>
     <div class="profile--articles">
       <div class="articles--caroussel">
@@ -19,20 +19,44 @@
 </template>
 
 
-<script lang="ts" setup>
+<script lang="ts" setup async>
   import ArticleCard from "@/views/components/article-card.vue";
   import useUserStore from "@/store/user.store";
-  import { useRoute } from "vue-router";
+  import { useRoute, useRouter } from "vue-router";
   import {User} from "@/types/user"
-  import {defineProps} from "vue";
+  import {defineProps, onMounted, ref, Ref} from "vue";
+  import {HTTPClient} from '@/helpers/http.helpers'
   
   let route = useRoute();
+  let router = useRouter();
   let userStore = useUserStore();
   let isMe = route.path.match(/my-profile/igm);
-  let props = isMe ? userStore : defineProps<{user : Partial<User>}>();
-
+  let {id} = route.params;
+  let user : Ref<User | null> = ref(isMe ? userStore.user : null);
+  let httpClient = new HTTPClient(window);
   
-  let userPic = "";
+  isMe || onMounted(async ()=>{
+    try {
+        const req = await fetch("http://localhost:4000/users/"+ id, 
+        {
+          credentials : "include",
+          headers : {
+            'Accept' : 'application/json,text/html',
+          },
+          'referrer' : ''
+        }
+        );
+        const res = await req.json();
+        if((res as User).id){
+          user.value = res;
+        }
+      } catch (error) {
+        console.log(error)
+      }
+
+  })
+
+  let userCoverPic = "";
   let color = `hsl(${Math.floor(Math.random() * 359)}, 80%, 50%)`;
   let storedColor = localStorage.getItem("coverColor");
   let coverColor = (storedColor || color) as string;
@@ -58,34 +82,34 @@ let fakeArticleProps = {id : 123,
     &--card{
       height :  220px;
       display : grid;
-      // grid-template-areas: 'name pic .'
-      //                     '. status .';
-      grid-template-columns: 1fr 1fr;
       box-shadow: S.$shadow;
       position : relative;
-    }
-    &--pic{
-      position : absolute;
-      border-radius: 50%;
-      height : 160px;
-      width : 160px;
-      background : red;
-      position : relative;
-      // left : 50%;
-      transform: translateX(-50%) translateY(-50%);
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-rows: auto min(30%, 100%) 1fr;
+      // *{
+      //   border : 1px blue solid;
+      // }
     }
     &--name{
-      text-transform: capitalize;
-      padding-left: 20px;
-      padding-top: 20px;
+      text-align: center;
+    }
+    &--pic{
+      transform : translateY(-50%);
+      border-radius: 50%;
+      height : 140px;
+      width : 140px;
     }
     &--status{
-      width : minmax(320px, 500px);
+      transform : translateY(-50%);
+      grid-column-start: 1;
+      grid-column-end: 4;
       text-align: center;
-      position : relative;
-      left : 100%;
-      transform: translateX(-50%) translateY(-120%);
-
+    }
+    &--joined{
+      transform : translateY(-50%);
+      grid-column-start: 1;
+      grid-column-end: 4;
+      text-align: center;
     }
     &--articles{
       height : 320px;
@@ -107,7 +131,7 @@ let fakeArticleProps = {id : 123,
       height : 100vh;
       scroll-padding-top: 50px;
       display : flex;
-      align-items: center;
+      align-items: flex-start;
       gap: none;
       &--cover{
         height : 100%;
@@ -115,11 +139,16 @@ let fakeArticleProps = {id : 123,
         box-shadow: S.$shadow inset;
       }
       &--card{
-        display : block;
+        display : flex;
         position: static;
-        height : 100%;
+        height : 50%;
         width : 20%;
         text-align: center;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        padding-top: 15px;
+        box-shadow: unset;
       }
       &--pic{
         position : unset;
@@ -127,17 +156,24 @@ let fakeArticleProps = {id : 123,
         order : 1;
       }
       &--name{
-      text-transform: capitalize;
-      padding-left: 20px;
-      padding-top: 20px;
+        text-transform: capitalize;
+        // padding-left: 20px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        order : 2;
       }
-      &--status{
+      &--status {
+        order : 3
+      }
+      &--joined {
+        order : 4
+      }
+      &--status, &--joined{
         width : minmax(320px, 500px);
         text-align: center;
         position : static;
         transform : unset;
         left : unset;
-
       }
       &--articles{
         width : 60%;

@@ -7,6 +7,8 @@ import LinksPage from "@/views/pages/links-page.vue"
 import LoginPage from "@/views/pages/login-page.vue"
 import LoginRedirectPage from '@/views/pages/login-redirect-page.vue'
 import ProfilePage from '@/views/pages/profile-page.vue'
+import useUserStore from '@/store/user.store'
+import ErrorDOM from "@/views/components/custom-error-DOM.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -47,8 +49,17 @@ const routes: Array<RouteRecordRaw> = [
   {
     path : "/my-profile",
     name : 'myProfile',
-    component : ProfilePage
+    component : ProfilePage,
   },
+  {
+    path : "/user/:id",
+    name : 'userProfile',
+    component : ProfilePage,
+  }, {
+    path : "/error404",
+    name : 'error',
+    component : ErrorDOM,
+  }
   // {
   //   path : "/*",
   //   name : "unknown",

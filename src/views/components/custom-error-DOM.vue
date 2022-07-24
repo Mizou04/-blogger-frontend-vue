@@ -1,18 +1,23 @@
 <template lang="html">
   <div :style="props.style" :class="props.class || 'page_error'">
-    <p class="page_error--msg">{{props.msg}}</p>
+    <p class="page_error--msg">{{props.msg || route.params.msg}}</p>
   </div>
 </template>
 
 
 <script lang="ts" setup>
-import {StyleHTMLAttributes, defineProps} from "vue"
-
-  const props = defineProps<{
+import {StyleHTMLAttributes, defineProps, onMounted} from "vue"
+import {useRoute} from "vue-router"
+  const route = useRoute();
+  const props = defineProps<{ 
     msg : string,
     style? : StyleHTMLAttributes,
     class? : string
   }>()
+
+onMounted(()=>{
+  console.log(history.state)
+})
 
 </script>
 

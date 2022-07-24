@@ -13,9 +13,10 @@
   const store = useUserStore();
   const router = useRouter();
 
-  onMounted(()=> {
+  onMounted(async ()=> {
     try{
-      store.getUserCredentials();
+      await store.getUserCredentials();
+      console.log(store.user)
     } catch(e){
       console.log(e)
     }
@@ -31,41 +32,5 @@
   //     console.log(error)
   //   }
   // })
-// async getUserCredentials() : Promise<void>{
-//   let currentWindow = (opener || window);
-//   let HttpClient = new HTTPClient(currentWindow)
-//   try {
-//     const response = await HttpClient.call("http://localhost:4000/me", {method : "GET"});
-//     currentWindow.console.log(response);
-//     //if response has an ID means we have a User
-//     if((response as User).id){
-//       this.setUser(response as User);
-//       currentWindow.console.log("response : ", response);
-//       storeUser(currentWindow, response);
-//       if(opener){
-//         window.close();
-//       }
-//       currentWindow.history.replace('/');
-//       // router.replace("/");
-//     //else we have Error login instead
-//     } else {
-//       this.setLoginError(true);
-//       this.setLoginErrorMsg(response as string);
-//       if(opener){
-//         window.close();
-//       }
-//       // router.replace("/login");
-//       currentWindow.history.replace('/');
-//       setTimeout(() => {
-//         this.loginError = false;
-//         this.loginErrorMsg = "";
-//       }, 10000);
-//     }
-//     } catch (error) {
-//       this.setLoginError(true);
-//       this.setLoginErrorMsg((error as Error).message);
-//       currentWindow.console.log((error as Error).stack);
-//     }
-//   }
 
 </script>

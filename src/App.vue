@@ -21,9 +21,10 @@
 
   async function getUserOnLoad(){
     try{
-      if(document.cookie.match(/session/igm)){
-        userStore.getUserCredentials();
-      }
+      // if(document.cookie.match(/userSession/igm)){
+      //   console.log(document.cookie)
+      // }
+        await userStore.getUser();
       // if((data as User).id){
       //   storeUser(window, data);
       //   userStore.setUser(data as User);
@@ -36,7 +37,7 @@
     }
   }
 
-  onMounted(()=>{
+onMounted(()=>{
     window.addEventListener("resize", toggleDesktop, false);
     window.addEventListener("load", getUserOnLoad, false)
   })

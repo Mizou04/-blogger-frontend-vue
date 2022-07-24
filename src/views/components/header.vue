@@ -4,10 +4,16 @@
     <template v-if="layoutStore.isDesktop">
       <Navbar/>
       <div class="header--actions">
-        <router-link to="/login" v-slot="{navigate}">
+        
+        <router-link v-if="!userStore.user" to="/login" v-slot="{navigate}">
           <button  @click="navigate" class="header--login">
             Get Started!
           </button>
+        </router-link>
+        <router-link v-else to="/my-profile" v-slot="{navigate}">
+          <a @click="navigate" class="header--profile">
+            my profile
+          </a>
         </router-link>
       </div>
     </template>
@@ -23,9 +29,11 @@
   import {Menu} from "mdue"
   import {ref, reactive, onMounted, onUnmounted} from "vue"
   import useLayoutStore from "@/store/layout.store"
+  import useUserStore from "@/store/user.store"
   import Drawer from "./drawer.vue"
 
   let layoutStore = useLayoutStore();
+  const userStore = useUserStore();
 
   const drawerHandler = (e : MouseEvent)=>{
       if(!layoutStore.drawerIsOpen && (e.target as HTMLElement).classList.contains("header--burger")){
@@ -70,6 +78,10 @@
       color : white;
       border : none;
       box-shadow : 0px 2px 4px rgba(0, 0, 9, 0.146);
+    }
+    &--profile{
+      padding : 7px 45px;
+      font-weight: 600;
     }
   }
   .drawer_transition-leave-active{

@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="form--wrapper">
-    <ErrorDom v-if="store.loginError" :msg="errorMsg"/>
+    <ErrorDom v-if="store.loginError" :msg="loginErrorMsg"/>
     <AuthForm/>
   </div>
 </template>
@@ -12,7 +12,7 @@
   import { ref } from "vue"
 
   const store = useUserStore();
-  let errorMsg = ref(store.loginErrorMsg);
+  let loginErrorMsg = ref(store.loginErrorMsg);
 
 
 </script>
