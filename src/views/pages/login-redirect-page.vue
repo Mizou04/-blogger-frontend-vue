@@ -17,8 +17,6 @@
     let myOpener = (opener || window);
     try{
       await userStore.getUserLogin(myOpener);
-      myOpener.history.push("/");
-      console.log(userStore.user)
     } catch(e){
       console.log(e)
     }

@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="form--wrapper">
-    <CustomErrorDom v-if="store.loginError" :msg="loginErrorMsg"/>
+    <CustomErrorDom v-if="userStore.loginError" :msg="loginErrorMsg"/>
     <AuthForm/>
   </div>
 </template>
@@ -9,11 +9,20 @@
   import  AuthForm  from "@/views/components/auth-form.vue";
   import CustomErrorDom from '@/views/components/custom-error-DOM.vue'
   import useUserStore from "@/store/user.store"
-  import { ref } from "vue"
+  import { ref, watch, computed, watchEffect } from "vue"
+  import { useRouter } from "vue-router";
 
-  const store = useUserStore();
-  let loginErrorMsg = ref(store.loginErrorMsg);
-
+  const userStore = useUserStore();
+  const loginErrorMsg = ref(userStore.loginErrorMsg);
+  const router = useRouter();
+  const user = ref(userStore.user)
+  
+  watch(()=>user,(nUser, oUser)=>{
+    if(nUser.value == oUser?.value) return; 
+    else {
+      router.push("/");
+    }
+  }, {immediate : true, deep : true})
 
 </script>
 
