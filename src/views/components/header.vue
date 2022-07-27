@@ -4,16 +4,17 @@
     <template v-if="layoutStore.isDesktop">
       <Navbar/>
       <div class="header--actions">
-        
-        <router-link v-if="!userStore.user" to="/login" v-slot="{navigate}">
-          <button  @click="navigate" class="header--login">
-            Get Started!
-          </button>
-        </router-link>
-        <router-link v-else to="/my-profile" v-slot="{navigate}">
+        <router-link v-if="!userStore.user" to="/my-profile" v-slot="{navigate}">
           <a @click="navigate" class="header--profile">
             my profile
           </a>
+          <LogoutButton/>
+        </router-link>
+        
+        <router-link v-else to="/login" v-slot="{navigate}">
+          <button  @click="navigate" class="header--login">
+            Get Started!
+          </button>
         </router-link>
       </div>
     </template>
@@ -31,6 +32,8 @@
   import useLayoutStore from "@/store/layout.store"
   import useUserStore from "@/store/user.store"
   import Drawer from "./drawer.vue"
+  import LogoutButton from "./logout-button.vue"
+
 
   let layoutStore = useLayoutStore();
   const userStore = useUserStore();

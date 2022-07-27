@@ -58,7 +58,7 @@ const routes: Array<RouteRecordRaw> = [
   }, {
     path : "/error404",
     name : 'error',
-    component : ErrorDOM,
+    component : HomePage,
   }
   // {
   //   path : "/*",

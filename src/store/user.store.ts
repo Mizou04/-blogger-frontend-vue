@@ -1,26 +1,19 @@
 import {defineStore, _ActionsTree, StoreGetters, StoreState, _GettersTree} from "pinia"
-import { UnwrapRef } from "vue"
 import { User } from "@/types/user"
 import {useRouter} from "vue-router"
-import { HTTPClient } from "@/helpers/http.helpers";
-import { storeUser } from "@/helpers/storage.helpers";
+import useLayoutStore from "@/store/layout.store";
 
-const router = useRouter();
 
 interface State{
-  user : User | null,
-  urls : {google : string , facebook : string},
-  loginError : boolean,
-  loginErrorMsg : string
+  readonly user : User | null,
+  readonly urls : {google : string , facebook : string},
 }
 
 
 interface Actions extends _ActionsTree{
-  setUser(user : User) : void, 
-  setLoginError(v : boolean) : void,
-  setLoginErrorMsg(msg : string) : void,
-  getUserCredentials() : Promise<void>
-  getUser() : Promise<void>
+  setUser(user : User | null) : void, 
+  getUserLogin(win : Window) : Promise<void>,
+  // loginUser(win : Window, strategy : 'google' | 'facebook') : Promise<void>,
 }
 
 
@@ -28,9 +21,7 @@ export default defineStore<string, State, _GettersTree<State>, Actions>('user', 
   state(){
     return {
       // user :JSON.parse(window.sessionStorage.getItem("user") as string) || this.actions?.getUserCredentials() || {name : "", email : "", username : "", id : "", joinedAt : "", lastModified : "", providerId : ""},
-      user : {name : "hamza", email : "", username : "",joinedAt : "12"},
-      loginError : false,
-      loginErrorMsg : "",
+      user : null,
       urls : {
         google : "http://localhost:4000/authentication/google",
         // google : "/response",
@@ -42,51 +33,7 @@ export default defineStore<string, State, _GettersTree<State>, Actions>('user', 
     setUser(user : User){
       this.$state = {...this.state, user : user};
     },
-    setLoginError(v : boolean){
-      this.$state = {...this.state, loginError : v};
-    },
-    setLoginErrorMsg(msg : string) {
-      this.$state = {...this.state, loginErrorMsg : msg};
-    },
-    async getUserCredentials() : Promise<void>{
-      const parentWindow = (opener || window); // if no parent we take the same window
-      const httpClient = new HTTPClient(parentWindow)
-      try {
-        const response = await httpClient.call("http://localhost:4000/me", {method : "GET", credentials : "include"});
-        parentWindow.console.log(response);
-        //if response has an ID means we have a User
-        if((response as User).id){
-          this.setUser(response as User);
-          parentWindow.console.log("response : ", response);
-          storeUser(parentWindow, response);
-          if(opener){
-            window.close();
-          }
-          parentWindow.history.replace('/');
-          
-          // router.replace("/");
-        //else we have Error login instead
-        } else {
-          this.setLoginError(true);
-          this.setLoginErrorMsg(response as string);
-          if(opener){
-            window.close();
-          }
-          // router.replace("/login");
-          parentWindow.history.replace('/');
-          setTimeout(() => {
-            this.loginError = false;
-            this.loginErrorMsg = "";
-          }, 10000);
-        }
-        } catch (error) {
-          this.setLoginError(true);
-          this.setLoginErrorMsg((error as Error).message);
-          parentWindow.console.log((error as Error).stack);
-        }
-      },
-    async getUser() : Promise<void>{
-      const win : Window = (opener || window);
+    async getUserLogin(win : Window) : Promise<void>{
       try {
         const req = await win.fetch("http://localhost:4000/", 
         {
@@ -98,15 +45,15 @@ export default defineStore<string, State, _GettersTree<State>, Actions>('user', 
         }
         );
         const res = await req.json();
-        if((res as User).id){
-          this.user = res;
-        }
-        console.log(120 + " User_store", this.user, res);
+        if((res.user as User).id && (res.user as User).username){
+          this.setUser(res.user);
+        } 
+        console.log(120 + " User_store", this.user, res.user);
       } catch (error) {
         console.log(error)
       }
     }
-  },
+  }
 })
 
 

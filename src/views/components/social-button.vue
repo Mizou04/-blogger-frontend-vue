@@ -5,7 +5,8 @@
 <script lang="ts" setup>
   import {defineProps, ref, onMounted, onUnmounted, watch} from "vue";
   import {useRoute, useRouter} from "vue-router"
-  import userStore from "@/store/user.store";
+  import useUserStore from "@/store/user.store";
+  import useLayoutStore from "@/store/layout.store";
   import {User} from "@/types/user"
 
   const state = defineProps<{social : "google" | "facebook"}>();
@@ -13,14 +14,14 @@
   const popupWindowParams = "scrollbars=1,height=600,width=500,titlebar=1,menubar=1,top=30";
   
   const router = useRouter();
-  const store = userStore();
-  const urls = store.urls;
+  const userStore = useUserStore();
+  const layoutStore = useLayoutStore();
+  const urls = userStore.urls;
 
   function clickHandler(e : MouseEvent){
-    store.setLoginError(false);
-    store.setLoginErrorMsg("");
+    layoutStore.hideError();
     if(state.social == "google"){
-      popupWindow = window.open(store.urls.google, "_blank", popupWindowParams) as Window;
+      popupWindow = window.open(userStore.urls.google, "_blank", popupWindowParams) as Window;
       if(!popupWindow?.opener){
         popupWindow.opener = window;
         popupWindow.focus();

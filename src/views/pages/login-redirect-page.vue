@@ -10,13 +10,15 @@
   import useUserStore from "@/store/user.store"
   import {User} from "@/types/user";
 
-  const store = useUserStore();
+  const userStore = useUserStore();
   const router = useRouter();
 
   onMounted(async ()=> {
+    let myOpener = (opener || window);
     try{
-      await store.getUserCredentials();
-      console.log(store.user)
+      await userStore.getUserLogin(myOpener);
+      myOpener.history.push("/");
+      console.log(userStore.user)
     } catch(e){
       console.log(e)
     }

@@ -21,17 +21,7 @@
 
   async function getUserOnLoad(){
     try{
-      // if(document.cookie.match(/userSession/igm)){
-      //   console.log(document.cookie)
-      // }
-        await userStore.getUser();
-      // if((data as User).id){
-      //   storeUser(window, data);
-      //   userStore.setUser(data as User);
-      // } else {
-      //   userStore.setLoginError(true);
-      //   userStore.setLoginErrorMsg(data as string);
-      // }
+      await userStore.getUserLogin(window);
     } catch(e){
       console.log(e)
     }

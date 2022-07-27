@@ -1,4 +1,7 @@
 <template lang="html">
+  <teleport to='body' v-if="layoutStore.isError">
+    <ErrorDom :msg="layoutStore.errorMsgDOM"/>
+  </teleport>
   <div class="profile">
     <img :src="userCoverPic" alt="" class="profile--cover" v-if="userCoverPic">
     <div class="profile--cover" :style="{background : coverColor}" v-else></div>
@@ -21,7 +24,9 @@
 
 <script lang="ts" setup async>
   import ArticleCard from "@/views/components/article-card.vue";
+  import ErrorDOM from "@/views/components/custom-error-DOM.vue";
   import useUserStore from "@/store/user.store";
+  import useLayoutStore from "@/store/layout.store";
   import { useRoute, useRouter } from "vue-router";
   import {User} from "@/types/user"
   import {defineProps, onMounted, ref, Ref} from "vue";
@@ -30,10 +35,10 @@
   let route = useRoute();
   let router = useRouter();
   let userStore = useUserStore();
+  let layoutStore = useLayoutStore();
   let isMe = route.path.match(/my-profile/igm);
   let {id} = route.params;
   let user : Ref<User | null> = ref(isMe ? userStore.user : null);
-  let httpClient = new HTTPClient(window);
   
   isMe || onMounted(async ()=>{
     try {
@@ -49,9 +54,12 @@
         const res = await req.json();
         if((res as User).id){
           user.value = res;
+        } else {
+          throw "user id not valid"
         }
-      } catch (error) {
-        console.log(error)
+      } catch (e) {
+        layoutStore.showError((e as Error).message);
+        console.log(e)
       }
 
   })
