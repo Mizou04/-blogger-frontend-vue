@@ -45,7 +45,7 @@ export default defineStore<string, State, _GettersTree<State>, Actions>('user', 
         }
         );
         const res = await req.json();
-        if((res.user as User).id && (res.user as User).username){
+        if((res.user as User)?.id && (res.user as User)?.username){
           this.setUser(res.user);
         } 
         console.log(120 + " User_store", this.user, res.user);

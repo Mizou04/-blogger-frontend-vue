@@ -4,12 +4,14 @@
     <template v-if="layoutStore.isDesktop">
       <Navbar/>
       <div class="header--actions">
-        <router-link v-if="!userStore.user" to="/my-profile" v-slot="{navigate}">
-          <a @click="navigate" class="header--profile">
-            my profile
-          </a>
+        <div  v-if="userStore.user">
+          <router-link to="/my-profile" v-slot="{navigate}">
+            <a @click="navigate" class="header--profile">
+              my profile
+            </a>
+          </router-link>
           <LogoutButton/>
-        </router-link>
+        </div>
         
         <router-link v-else to="/login" v-slot="{navigate}">
           <button  @click="navigate" class="header--login">

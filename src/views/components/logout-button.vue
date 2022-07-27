@@ -1,5 +1,5 @@
 <template lang="html">
-  <button @click="logoutHandler">logout</button>
+  <a href="http://localhost:4000/logout" @click.prevent="logoutHandler">logout</a>
 </template>
 
 
@@ -8,15 +8,15 @@
   import { useRouter } from "vue-router";
   
   const userStore = useUserStore();
+  const router = useRouter();
 
-  async function logoutHandler(e : Event){
-    e.preventDefault();
+  async function logoutHandler(){
     try {
-      await fetch("http://localhost:4000/logout", {method : "POST", credentials : "include", redirect : "follow", referrerPolicy : "no-referrer"});
+      await fetch("http://localhost:4000/logout", {method : "POST", credentials : "include", referrerPolicy : "no-referrer",mode : process.env.NODE_ENV == "production" ? "cors" : "no-cors", headers : {'Access-Control-Allow-Origin' : "cross-origin"}});
       // let res = await req.json();
-      // useRouter().push("http://localhost:4000/logout")
+      router.push("/")
       userStore.setUser(null);
-      useRouter().push("/");
+      // useRouter().push("/");
     } catch (e) {
       console.log(e)
     }
