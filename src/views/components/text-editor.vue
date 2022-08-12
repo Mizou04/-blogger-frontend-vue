@@ -14,13 +14,13 @@
 
   let userStore = useUserStore();
   let props = defineProps<{
-    text : string
+    text : string,
   }>()
   let emits = defineEmits(["textChange"])
   
   let toolbarOptions = [['bold', 'italic', 'underline'], ['link', 'image', 'video']];
   onMounted(() => {    
-    let editor = new Quill(".textEditor--input",
+    let editor : Quill = new Quill(".textEditor--input",
     {
       theme : "snow",
       placeholder : "your thoughts here...",
@@ -32,7 +32,7 @@
 
     editor.setContents(JSON.parse(props?.text || '{}') as any);
     editor.on("text-change", (delta, oldDelta)=>{
-      emits('textChange', JSON.stringify(editor.getContents(0, Infinity)))
+      emits('textChange', editor)
     })
 
   })

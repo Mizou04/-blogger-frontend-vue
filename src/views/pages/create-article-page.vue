@@ -19,6 +19,8 @@
   import { IBlogPost } from "@/types/blogPost";
   import { useRouter } from 'vue-router'
   import {} from 'mdue'
+  import Quill from "quill"
+
 
   type IEditingPhase = "title" | "editing" | "overview" | "review";
   
@@ -30,6 +32,7 @@
   let layoutStore = useLayoutStore();
   let userStore = useUserStore();
   let storedDataState = JSON.parse(localStorage.getItem("dataState") as string) as IBlogPost;
+  let overviewDefault = ref("")
   let dataState = reactive<IBlogPost>({
     title : storedDataState?.title || '',
     id : storedDataState?.id || '',
@@ -42,7 +45,7 @@
     content : storedDataState?.content || '',
     createdAt : storedDataState?.createdAt || '',
     lastModified : storedDataState?.lastModified || '',
-    overview : storedDataState?.overview || '',
+    overview : storedDataState?.overview || overviewDefault.value,
     thumbnail : storedDataState?.thumbnail || ''
   });
 
@@ -51,10 +54,11 @@
     localStorage.setItem("dataState", JSON.stringify(dataState))
     console.log(v);
   }
-  function changeContentHandler(v : string){
-    dataState.content = v;
-    localStorage.setItem("dataState", JSON.stringify(dataState))
-    console.log(v);
+  function changeContentHandler(editor : Quill){
+    dataState.content = JSON.stringify(editor.getContents(0, Infinity));
+    overviewDefault.value = editor.root.innerText.slice(0, 120) + "..."
+    localStorage.setItem("dataState", JSON.stringify(dataState));
+    console.log(overviewDefault.value);
   }
 
   function cancelHandler(){
