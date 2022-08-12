@@ -61,14 +61,13 @@
 <style lang="scss" scoped>
   @use "@/views/scss/scheme" as S;
   .header{
-    box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.046);
+    box-shadow: S.$shadow;
     display  : flex;
     justify-content: space-between;
     align-items: center;
     height : 50px;
     width : 100%;
     padding : 0px 7px;
-    box-shadow: S.$shadow;
     &--logo{
       width : 20px;
       height : 20px;
@@ -91,7 +90,7 @@
   }
   .drawer_transition-leave-active{
     transition : all .04s .05s ease; 
-    animation : bounce-in 0.5s reverse;
+    // animation : bounce-in 0.5s reverse;
   }
   .drawer_transition-enter-active{
     transition : all 0.3s 0s linear;

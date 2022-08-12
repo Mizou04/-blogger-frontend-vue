@@ -10,7 +10,6 @@
   import useUserStore from "@/store/user.store"
   import {onMounted, onUnmounted, ref, reactive} from "vue"
   import { storeUser, deleteUser } from "@/helpers/storage.helpers";
-  import {User} from '@/types/user'
 
   let layoutStore = ref(useLayoutStore());
   let userStore = useUserStore();

@@ -1,17 +1,14 @@
+import { IOwner } from "./owner";
+
 export interface IBlogPost{
-  readonly id? : string,
-  readonly title? : string,
-  readonly content? : string,
-  readonly overview? : string,
-  readonly thumbnail? : string,
-  readonly createdAt? : string,
-  readonly lastModified? : string,
-  readonly owner? : {
-    id : string,
-    email : string,
-    profilePic : string, 
-    username : string,
-  },
+  id : string,
+  title : string,
+  content : string,
+  overview : string,
+  thumbnail : string,
+  createdAt? : string,
+  lastModified? : string,
+  owner : IOwner,
 }
 
 export interface IBlogPostMin{

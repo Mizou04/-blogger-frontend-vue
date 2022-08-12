@@ -8,7 +8,6 @@
   import {onMounted} from "vue"
   import {useRouter, useRoute} from "vue-router"
   import useUserStore from "@/store/user.store"
-  import {User} from "@/types/user";
 
   const userStore = useUserStore();
   const router = useRouter();

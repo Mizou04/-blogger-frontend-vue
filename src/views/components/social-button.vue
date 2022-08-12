@@ -7,7 +7,6 @@
   import {useRoute, useRouter} from "vue-router"
   import useUserStore from "@/store/user.store";
   import useLayoutStore from "@/store/layout.store";
-  import {User} from "@/types/user"
 
   const state = defineProps<{social : "google" | "facebook"}>();
   let popupWindow : Window;

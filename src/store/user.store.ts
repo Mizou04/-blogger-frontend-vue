@@ -1,17 +1,17 @@
 import {defineStore, _ActionsTree, StoreGetters, StoreState, _GettersTree} from "pinia"
-import { User } from "@/types/user"
 import {useRouter} from "vue-router"
 import useLayoutStore from "@/store/layout.store";
+import { IUser } from "@/types/user";
 
 
 interface State{
-  readonly user : User | null,
+  readonly user : IUser | null,
   readonly urls : {google : string , facebook : string},
 }
 
 
 interface Actions extends _ActionsTree{
-  setUser(user : User | null) : void, 
+  setUser(user : IUser | null) : void, 
   getUserLogin(win : Window) : Promise<void>,
   // loginUser(win : Window, strategy : 'google' | 'facebook') : Promise<void>,
 }
@@ -30,7 +30,7 @@ export default defineStore<string, State, _GettersTree<State>, Actions>('user', 
     }
   },
   actions: {
-    setUser(user : User){
+    setUser(user : IUser){
       this.$state = {...this.state, user : user};
     },
     async getUserLogin(win : Window) : Promise<void>{
@@ -45,12 +45,11 @@ export default defineStore<string, State, _GettersTree<State>, Actions>('user', 
         }
         );
         const res = await req.json();
-        if((res.user as User)?.id && (res.user as User)?.username){
+        if((res.user as IUser)?.id && (res.user as IUser)?.username){
           this.setUser(res.user);
         } 
-        console.log(120 + " User_store", this.user, res.user);
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     }
   }

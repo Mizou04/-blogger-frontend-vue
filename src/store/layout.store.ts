@@ -7,11 +7,15 @@ export default defineStore("layout", {
       drawerIsOpen : false,
       isError : false,
       errorMsgDOM : "",
+      headerVisibility : true
     }
   },
   actions : {
     toggleDesktop(){
       this.isDesktop = window.innerWidth > 700;
+    },
+    toggleHeader(){
+      this.headerVisibility = !this.headerVisibility;
     },
     showError(msg : string){
       this.isError = true;

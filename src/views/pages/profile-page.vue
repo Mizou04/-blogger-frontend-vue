@@ -28,17 +28,16 @@
   import useUserStore from "@/store/user.store";
   import useLayoutStore from "@/store/layout.store";
   import { useRoute, useRouter } from "vue-router";
-  import {User} from "@/types/user"
   import {defineProps, onMounted, ref, Ref} from "vue";
-  import {HTTPClient} from '@/helpers/http.helpers'
-  
+  import {IUser} from '@/types/user'
+
   let route = useRoute();
   let router = useRouter();
   let userStore = useUserStore();
   let layoutStore = useLayoutStore();
   let isMe = route.path.match(/my-profile/igm);
   let {id} = route.params;
-  let user : Ref<User | null> = ref(isMe ? userStore.user : null);
+  let user : Ref<IUser | null> = ref(isMe ? userStore.user : null);
   
   isMe || onMounted(async ()=>{
     try {
@@ -52,7 +51,7 @@
         }
         );
         const res = await req.json();
-        if((res as User).id){
+        if((res as IUser).id){
           user.value = res;
         } else {
           throw "user id not valid"
