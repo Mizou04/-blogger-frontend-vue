@@ -2,10 +2,25 @@
 
 <template lang="html">
   <div class="article__metadata">
-    <input @input="changeHandler" ref="titleRef" v-model="props.source.title" class="article__metadata--input article__metadata--input-title" type="text"  name="title" placeholder="title here...">
-    <img class="article__metadata--img-overview" src="null"/> 
-    <button v-if="!props.source.thumbnail" class="article__metadata--btn article__metadata--btn-addImg" :src="props.source.thumbnail">Add Thumbnail</button> 
-    <button v-else class="article__metadata--btn">Cancel</button> 
+    <div style="position: relative">
+      <input 
+        :aria-valuemax="maxLength" 
+        @input="changeHandler" 
+        ref="titleRef" 
+        :value="props.source.title" 
+        :style="maxLength - lengthLeft < 20 ? {borderBottom : '2px rgba(255, 82, 144, 0.735) solid'} : ''"
+        class="article__metadata--input article__metadata--input-title" type="text"  name="title" placeholder="title here...">
+      <p style="position: absolute; right : 30px; bottom : 0px; font-size: .8em;">{{`${lengthLeft}/${maxLength}`}}</p>
+      <br/><span>{{maxLength - lengthLeft < 20 ? 'should be between 20 and 80 characters long' : ''}}</span>
+    </div>
+      
+    <div class="article__metadata--img">
+      <div v-if="!props.source.thumbnail || props.source.thumbnail.match(/#[0-9A-F]{6}|#[0-9A-F]{3}|rgba?\(|hsla?\(/gim)" :style="{background : props.source.thumbnail}" class="article__metadata--img-overview">
+        {{props.source.title}}
+      </div>
+      <img v-else class="article__metadata--img-overview" :src="props.source.thumbnail"/> 
+      <button class="article__metadata--btn article__metadata--btn-addImg">Add Thumbnail</button> 
+    </div>
   </div>
 </template>
 
@@ -18,7 +33,9 @@
   let props = defineProps<{source : Pick<IBlogPost, 'title' | 'thumbnail'>}>();
   let emits = defineEmits(["titleEdit"]);
 
-  let titleRef : Ref = ref(null)
+  let titleRef : Ref = ref("");
+  let maxLength = ref(80);
+  let lengthLeft = ref(maxLength.value);
 
   onMounted(() => {
     (titleRef.value as HTMLInputElement).focus()
@@ -26,7 +43,9 @@
 
   function changeHandler(e : Event){
     e.preventDefault();
-    emits("titleEdit", (e.target as HTMLInputElement).value);
+    let value = (e.target as HTMLInputElement).value.trim();
+    emits("titleEdit", value);
+    lengthLeft.value = maxLength.value - value.length;
   }
 
 </script>
@@ -42,11 +61,12 @@
       border-left: 1px rgba(208, 208, 208, 0.426) solid;
       background : transparent;
       padding : 0px 4px;
-      width : 100%;
+      width : 95%;
       height : 40px;
       outline : none;
       transition : padding .3s 0s ease-in;
       transition : font-size .2s 0s ease-in;
+      margin : auto;
       // position :relative;
       // transform: translateX(-50%);
       // left : 50%;
@@ -58,19 +78,35 @@
         font-weight: 100;
       }
     }
-    &--img-overview{
-      height : 360px;
+    &--img{
+      position : relative;
       width : min(380px, 100%);
-      margin-top: 10px;
-      outline : none;
-      border-radius: 4px;
+      margin : auto;
+      &-overview{
+        height : 360px;
+        width : 100%;
+        margin-top: 10px;
+        outline : none;
+        border-radius: 4px;
+        //if image src is actually a linear gradiant or color in general
+        padding : 0px 10px;
+        font-family: sans-serif;
+        font-size: 2.5em;
+        color : black;
+        text-transform: uppercase;
+        font-weight : 600;
+        display : flex;
+        text-align : center;
+        word-break: break-word;
+        align-items : center;
+      }
     }
     &--btn{
       padding : 7px 15px;
       position : absolute;
       top : 50%;
       left : 50%;
-      transform : translate(-50%);
+      transform : translate(-50%, -50%);
       &-addImg{
         padding : 7px 15px;
         border : none;

@@ -1,38 +1,43 @@
 <template lang="html">
   <div class="editing_page--container">
     <ArticleMetadataInput v-if="editingState == 'title'" @titleEdit="changeTitleHandler" :source="dataState"/>
-    <TextEditor @text-change="changeContentHandler" :text="dataState.content" v-else/>
+    <TextEditor @textChange="changeContentHandler" :text="dataState.content" v-else-if="editingState == 'editing'"/>
+    <ArticleOverviewStep :text="dataState.overview" @textChange="changeOverviewHandler" v-else-if="editingState == 'overview'"/>
+    <ArticlePreviewStep :blogpost="dataState" v-else/>
     <div class="editing_page--actions">
       <button @click="cancelHandler" class="editing_page--action editing_page--action-cancel">Cancel</button>
       <button v-if="stateIndex > 0" @click="prevHandler" class="editing_page--action editing_page--action-previous">Previous</button>
-      <button @click="nextHandler" class="editing_page--action editing_page--action-confirm">{{editingState == 'review' ? 'Confirm' : (editingState == "overview" ? 'review text' : 'Next')}}</button>
+      <button @click="nextHandler" class="editing_page--action editing_page--action-confirm">{{editingState == 'preview' ? 'Confirm' : (editingState == "overview" ? 'preview text' : 'Next')}}</button>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import ArticleMetadataInput from "@/views/components/article-title-thumbnail.vue"
-  import TextEditor from "@/views/components/text-editor.vue";
   import { Ref, ref, reactive } from "vue";
+  import {} from 'mdue';
+
   import useLayoutStore from "@/store/layout.store";
   import useUserStore from "@/store/user.store";
+  
   import { IBlogPost } from "@/types/blogPost";
   import { useRouter } from 'vue-router'
-  import {} from 'mdue'
   import Quill from "quill"
+  
+  import ArticleMetadataInput from "@/views/components/article-title-thumbnail-step.vue"
+  import TextEditor from "@/views/components/text-editor.vue";
+  import ArticleOverviewStep from "@/views/components/article-overview-step.vue"
+  import ArticlePreviewStep from "@/views/components/article-preview-step.vue"
 
-
-  type IEditingPhase = "title" | "editing" | "overview" | "review";
+  type IEditingPhase = "title" | "editing" | "overview" | "preview";
   
   let stateIndex = ref(0);
-  let states : IEditingPhase[] = ["title", "editing", "overview", "review"];
+  let states : IEditingPhase[] = ["title", "editing", "overview", "preview"];
   let editingState : Ref<IEditingPhase> = ref(states[stateIndex.value]);
   
   let router = useRouter();
   let layoutStore = useLayoutStore();
   let userStore = useUserStore();
   let storedDataState = JSON.parse(localStorage.getItem("dataState") as string) as IBlogPost;
-  let overviewDefault = ref("")
   let dataState = reactive<IBlogPost>({
     title : storedDataState?.title || '',
     id : storedDataState?.id || '',
@@ -45,20 +50,28 @@
     content : storedDataState?.content || '',
     createdAt : storedDataState?.createdAt || '',
     lastModified : storedDataState?.lastModified || '',
-    overview : storedDataState?.overview || overviewDefault.value,
-    thumbnail : storedDataState?.thumbnail || ''
+    overview : storedDataState?.overview || '',
+    thumbnail : storedDataState?.thumbnail || generateColor()
   });
 
   function changeTitleHandler(v : string){
     dataState.title = v;
     localStorage.setItem("dataState", JSON.stringify(dataState))
-    console.log(v);
   }
   function changeContentHandler(editor : Quill){
     dataState.content = JSON.stringify(editor.getContents(0, Infinity));
-    overviewDefault.value = editor.root.innerText.slice(0, 120) + "..."
+    dataState.overview = ((dataState.overview == "" && editor.root.innerText.length > 120) ? editor.root.innerText.slice(0, 120) + "..." : dataState.overview);
     localStorage.setItem("dataState", JSON.stringify(dataState));
-    console.log(overviewDefault.value);
+  }
+
+  function changeOverviewHandler(text : string){
+    dataState.overview = text;
+    localStorage.setItem("dataState", JSON.stringify(dataState));
+  }
+
+  function generateColor(){
+    let randomNum : string = (Math.floor(Math.random() * 360)).toString();
+    return `hsl(${randomNum}, 100%, 60%)`
   }
 
   function cancelHandler(){
@@ -66,9 +79,14 @@
   }
 
  function nextHandler(){
-  if(!dataState.title || dataState.title.length < 20 || dataState.title.length > 80){
+  if(
+    ( editingState.value == "title" && (!dataState.title || dataState.title.length < 20 || dataState.title.length > 80)) ||
+    ( editingState.value == "overview" && (dataState.overview.length < 20 || dataState.overview.length > 120 )) ||
+    ( editingState.value == "editing" && (dataState.content.length < 120))
+    ){
     return;
   }
+  console.log(editingState.value)
   if(stateIndex.value < states.length-1){
     stateIndex.value++;
     editingState.value = states[stateIndex.value];

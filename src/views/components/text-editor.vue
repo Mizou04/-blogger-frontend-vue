@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ReactiveEffect, ReactiveEffectRunner, Ref, ref, onMounted, watch, defineProps } from "vue";
+  import {defineEmits, reactive, ReactiveEffect, ReactiveEffectRunner, Ref, ref, onMounted, watch, defineProps } from "vue";
   import useUserStore from "@/store/user.store";
   import uselayoutStore from "@/store/layout.store";
   import { IBlogPost } from "@/types/blogPost";
@@ -16,7 +16,9 @@
   let props = defineProps<{
     text : string,
   }>()
-  let emits = defineEmits(["textChange"])
+  let emits = defineEmits<{
+    (e : "textChange", editor : Quill) : void
+  }>()
   
   let toolbarOptions = [['bold', 'italic', 'underline'], ['link', 'image', 'video']];
   onMounted(() => {    
