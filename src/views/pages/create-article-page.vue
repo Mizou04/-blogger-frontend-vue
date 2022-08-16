@@ -37,7 +37,7 @@
   let router = useRouter();
   let layoutStore = useLayoutStore();
   let userStore = useUserStore();
-  let storedDataState = JSON.parse(localStorage.getItem("dataState") as string) as IBlogPost;
+  let storedDataState = JSON.parse(sessionStorage.getItem("dataState") as string) as IBlogPost;
   let dataState = reactive<IBlogPost>({
     title : storedDataState?.title || '',
     id : storedDataState?.id || '',
@@ -56,17 +56,17 @@
 
   function changeTitleHandler(v : string){
     dataState.title = v;
-    localStorage.setItem("dataState", JSON.stringify(dataState))
+    sessionStorage.setItem("dataState", JSON.stringify(dataState))
   }
   function changeContentHandler(editor : Quill){
     dataState.content = JSON.stringify(editor.getContents(0, Infinity));
-    dataState.overview = ((dataState.overview == "" && editor.root.innerText.length > 120) ? editor.root.innerText.slice(0, 120) + "..." : dataState.overview);
-    localStorage.setItem("dataState", JSON.stringify(dataState));
+    dataState.overview = editor.root.innerText.slice(0, 120) + "...";
+    sessionStorage.setItem("dataState", JSON.stringify(dataState));
   }
 
   function changeOverviewHandler(text : string){
     dataState.overview = text;
-    localStorage.setItem("dataState", JSON.stringify(dataState));
+    sessionStorage.setItem("dataState", JSON.stringify(dataState));
   }
 
   function generateColor(){
@@ -75,13 +75,18 @@
   }
 
   function cancelHandler(){
-    router.replace("/");
+    let getconfirm = confirm("do you wanna cancel editing?")
+    if(getconfirm){
+      sessionStorage.removeItem("dataState");
+      router.replace("/");
+    }
   }
 
  function nextHandler(){
+   console.log(dataState.overview.length)
   if(
     ( editingState.value == "title" && (!dataState.title || dataState.title.length < 20 || dataState.title.length > 80)) ||
-    ( editingState.value == "overview" && (dataState.overview.length < 20 || dataState.overview.length > 120 )) ||
+    ( editingState.value == "overview" && (dataState.overview.length < 20 || dataState.overview.length > 123 )) ||
     ( editingState.value == "editing" && (dataState.content.length < 120))
     ){
     return;
@@ -109,8 +114,8 @@
     &--container{
       background : hsl(180, 20%, 97%);
       width : 100%;
-      height : calc(100% - 50px - 50px);
-      padding : 0px 5px;
+      height : calc(100% - 50px - 0px);
+      padding : 0px 5px 20px 5px;
       overflow : hidden;
     }
     &--actions{
@@ -121,7 +126,9 @@
       align-items: center;
       margin : auto;
       position : absolute;
-      bottom : 0;
+      padding : 10px;
+      margin-top : 10px;
+      bottom : -10px;
       right : 0;
     }
     &--action{

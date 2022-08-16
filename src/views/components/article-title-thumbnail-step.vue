@@ -8,10 +8,10 @@
         @input="changeHandler" 
         ref="titleRef" 
         :value="props.source.title" 
-        :style="maxLength - lengthLeft < 20 ? {borderBottom : '2px rgba(255, 82, 144, 0.735) solid'} : ''"
+        :style="maxLength - lengthLeft > 0 && maxLength - lengthLeft < 20 ? {borderBottom : '2px rgba(255, 82, 144, 0.735) solid'} : ''"
         class="article__metadata--input article__metadata--input-title" type="text"  name="title" placeholder="title here...">
       <p style="position: absolute; right : 30px; bottom : 0px; font-size: .8em;">{{`${lengthLeft}/${maxLength}`}}</p>
-      <br/><span>{{maxLength - lengthLeft < 20 ? 'should be between 20 and 80 characters long' : ''}}</span>
+      <br/><span>{{maxLength - lengthLeft > 0 && maxLength - lengthLeft < 20 ? 'should be between 20 and 80 characters long' : ''}}</span>
     </div>
       
     <div class="article__metadata--img">
@@ -80,7 +80,8 @@
     }
     &--img{
       position : relative;
-      width : min(380px, 100%);
+      width : min(90%);
+      height : 360px;
       margin : auto;
       &-overview{
         height : 360px;
@@ -90,13 +91,14 @@
         border-radius: 4px;
         //if image src is actually a linear gradiant or color in general
         padding : 0px 10px;
-        font-family: sans-serif;
-        font-size: 2.5em;
+        font-family: cambria;
+        font-size: 8vw;
         color : black;
         text-transform: uppercase;
         font-weight : 600;
-        display : flex;
         text-align : center;
+        display : flex;
+        justify-content: center;
         word-break: break-word;
         align-items : center;
       }

@@ -31,7 +31,7 @@
       },
       scrollingContainer : ".textEditor",
     });
-
+    editor.focus();
     editor.setContents(JSON.parse(props?.text || '{}') as any);
     editor.on("text-change", (delta, oldDelta)=>{
       emits('textChange', editor)

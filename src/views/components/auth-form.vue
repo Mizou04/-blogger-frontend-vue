@@ -55,9 +55,9 @@
 
   watch(()=> route.path, (newPath)=>{
     if(newPath.match('login')){
-      isLoginPage.value = newPath.match('login');
+      isLoginPage.value = true
     } else if(newPath.match('signup')){
-      isLoginPage.value = newPath.match('login');
+      isLoginPage.value = false;
     }
       formState.email = "";
       formState.name = "";

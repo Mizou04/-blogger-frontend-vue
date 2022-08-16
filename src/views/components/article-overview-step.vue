@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <textarea :aria-valuemax="maxLength" @input="inputHandler" :placeholder="`this is the setted overview : \n\n ->` + props.text + '\n\n\t      you can modify it now'">
+    <textarea :aria-valuemax="maxLength" @input="inputHandler" value="" :placeholder="`this is the setted overview : \n\n ->` + props.text + '\n\n\t      you can modify it now'">
     </textarea>
     <p>{{`${lengthLeft}/${maxLength}`}}</p>
   </div>
@@ -54,7 +54,7 @@
     font-size: 1em;
     &::placeholder{
       font-size: 1.2em;
-      color : hsl(210, 7%, 94%);
+      color : hsl(210, 7%, 80%);
     }
   }
   div > p{
