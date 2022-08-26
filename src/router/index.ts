@@ -7,8 +7,10 @@ import LinksPage from "@/views/pages/links-page.vue"
 import LoginPage from "@/views/pages/login-page.vue"
 import LoginRedirectPage from '@/views/pages/login-redirect-page.vue'
 import ProfilePage from '@/views/pages/profile-page.vue'
+import ErrorPage from '@/views/pages/error-page.vue'
 import ArticlePage from '@/views/pages/article-page.vue'
 import CreateArticlePage from '@/views/pages/create-article-page.vue'
+import useUserStore from "@/store/user.store"
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -61,7 +63,7 @@ const routes: Array<RouteRecordRaw> = [
     component : HomePage,
   },
   {
-    path : '/articles/:articleId',
+    path : '/article/:articleId',
     name : 'article',
     component : ArticlePage
   },
@@ -69,11 +71,12 @@ const routes: Array<RouteRecordRaw> = [
     path : '/article/new',
     name : 'createArticle',
     component : CreateArticlePage,
-    // redirect(to) {
-    //   if(!userStore.user){
-
+    // beforeEnter : (to, from)=>{
+    //   const userStore = useUserStore();
+    //   if(!userStore?.user?.id){
+    //     return {name : "signup"}
     //   }
-    // },
+    // }
   }
   // {
   //   path : "/*",

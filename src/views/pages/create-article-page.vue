@@ -57,6 +57,10 @@
   function changeTitleHandler(v : string){
     dataState.title = v;
     sessionStorage.setItem("dataState", JSON.stringify(dataState))
+    if(dataState.title.length > 80){
+      dataState.title = dataState.title.substring(0, 80);
+      return;
+    }
   }
   function changeContentHandler(editor : Quill){
     dataState.content = JSON.stringify(editor.getContents(0, Infinity));
@@ -83,12 +87,14 @@
   }
 
  function nextHandler(){
-   console.log(dataState.overview.length)
   if(
     ( editingState.value == "title" && (!dataState.title || dataState.title.length < 20 || dataState.title.length > 80)) ||
     ( editingState.value == "overview" && (dataState.overview.length < 20 || dataState.overview.length > 123 )) ||
     ( editingState.value == "editing" && (dataState.content.length < 120))
     ){
+      if(editingState.value == "title"){
+        alert("title must be present")
+      }
     return;
   }
   console.log(editingState.value)

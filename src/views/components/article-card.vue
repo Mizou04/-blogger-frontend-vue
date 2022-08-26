@@ -1,27 +1,20 @@
 <template lang="html">
    <div class="article">
-     <img :src="props.props.img" class="article--img" v-if="props.props.img"/>
-      <div :style="{background : articleColor}" class="article--img" v-else/>
+     <div :style="{background : props.thumbnail}" class="article--img"/>
       <div class="article--infos">
-        <h3 class="article--title">{{props.props.title}}</h3>
-        <p class="article--subtitle">{{props.props.subtitle}}</p>
-        <router-link :to="`/article/${props.props.id}`" class="article--read">read content</router-link>
+        <h3 class="article--title">{{props.title}}</h3>
+        <p class="article--overview">{{props.overview}}</p>
+        <router-link :to="`/article/${props.id}`" class="article--read">read content</router-link>
       </div> 
     </div>
 </template>
 
 <script lang="ts" setup>
   import {defineProps} from 'vue'
+  import { IBlogPostMin } from "@/types/blogPost";
 
-  let articleColor = `hsl(${Math.floor(Math.random() * 359)}, 80%, 50%)`;  
-  let props = defineProps<{
-    props : {
-      id : string | number,
-      title : string,
-      subtitle? : string,
-      img? : string,
-    }
-  }>()
+  let props = defineProps<IBlogPostMin>()
+
 
 </script>
 
@@ -29,24 +22,28 @@
   @use "@/views/scss/scheme" as S;
 
   .article{
-    width : 180px;
-    height : 230px;
-    border : 1px gray solid;
+    width : 100%;
+    height : 200px;
     box-shadow: S.$shadow;
-    margin: 0px 3px;
+    margin: 5px auto;
+    border-radius: 10px;
+    background : hsl(0, 0%, 100%);
     &--img{
-      height : 70%;
+      height : 100%;
+      width : 40%;
+      background-size: cover;
     }
     &--infos{
       width : 100%;
-      padding : 0px 5px;
+      padding : 5px;
     }
     &--title{
       width : 100%;
+      height : fit-content;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    &--subtitle{
+    &--overview{
       width : 100%;
       overflow: hidden;
       word-wrap: normal;
@@ -54,8 +51,12 @@
       height : 20px;
     }
     &--read{
-      color : green;
+      font-family: "candara";
+      font-size: 1.2em;
+      color : hsl(195, 50%, 63%);
       width : 100%;
+      text-align: end;
+      padding-right: 5px;
     }
   }
 </style>

@@ -20,7 +20,7 @@
     (e : "textChange", editor : Quill) : void
   }>()
   
-  let toolbarOptions = [['bold', 'italic', 'underline'], ['link', 'image', 'video']];
+  let toolbarOptions = [['bold', 'italic', 'underline'], ['code','link', 'image', 'video']];
   onMounted(() => {    
     let editor : Quill = new Quill(".textEditor--input",
     {

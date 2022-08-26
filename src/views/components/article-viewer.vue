@@ -58,6 +58,7 @@
     height : calc(100% - 20px);
     overflow-y: scroll;
     width : 100%;
+    background : white;
     &--header{
       height : 360px;
       width : 95%;
@@ -67,14 +68,14 @@
     &--img{
       height : inherit;
       width : 100%;
-      border: 2vw black solid;
+      border: 1.5vw black solid;
       margin-top: 10px;
       outline : none;
       border-radius: 4px;
       //if image src is actually a linear gradiant or color in general
       padding : 0px 10px;
       font-family: cambria;
-      font-size: 4.4vw;
+      font-size: 3.5vw;
       color : black;
       text-transform: uppercase;
       font-weight : 600;
@@ -101,12 +102,15 @@
       width : 85%;
       text-indent: 10px;
       padding : 20px 5px 0px 5px;
-      margin : auto;
-      position: relative;
       background : white;
-      & p{
-        text-justify: distribute;
-      }
+      margin : auto;
+      & p:nth-child(1) > code{
+          padding : 20px;
+          margin : 20px auto;
+
+          background : rgb(228, 228, 228);
+          transform : translateX(50%);
+        }
     }
   }
   

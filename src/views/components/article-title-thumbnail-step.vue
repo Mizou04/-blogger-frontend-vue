@@ -92,7 +92,7 @@
         //if image src is actually a linear gradiant or color in general
         padding : 0px 10px;
         font-family: cambria;
-        font-size: 8vw;
+        font-size: 6vw;
         color : black;
         text-transform: uppercase;
         font-weight : 600;
