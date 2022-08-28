@@ -72,10 +72,17 @@
   }
 
 
-let fakeArticleProps = {id : 123,
-                  title : "articlessssssssssssssssssssssssss1",
-                  subtitle : "some content"
-                  }
+let fakeArticleProps = {
+  id : "123",
+  title : "articlessssssssssssssssssssssssss1",
+  subtitle : "some content",
+  thumbnail : "#32f",
+  overview : "hell",
+  likes : {length : 12},
+  comments : {length : 5},
+  createdAt : new Date("2015-09-03").toDateString()
+}
+
 </script>
 
 

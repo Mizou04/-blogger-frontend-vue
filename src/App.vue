@@ -1,4 +1,7 @@
 <template lang="html">
+    <teleport to="body" v-if="layoutStore.isError">
+      <CustomErrorDOM :msg="layoutStore.errorMsgDOM"/>
+    </teleport>
     <Header/>
     <router-view class="router-view">
     </router-view>
@@ -8,14 +11,14 @@
   import Header from "./views/components/header.vue"
   import useLayoutStore from "@/store/layout.store"
   import useUserStore from "@/store/user.store"
-  import {onMounted, onUnmounted, ref, reactive} from "vue"
+  import {onMounted, onUnmounted, ref, reactive, watch} from "vue"
   import { storeUser, deleteUser } from "@/helpers/storage.helpers";
 
-  let layoutStore = ref(useLayoutStore());
+  let layoutStore = useLayoutStore();
   let userStore = useUserStore();
 
   function toggleDesktop(e: UIEvent){
-    layoutStore.value.toggleDesktop();
+    layoutStore.toggleDesktop();
   }
 
   async function getUserOnLoad(){
@@ -26,9 +29,15 @@
     }
   }
 
-onMounted(()=>{
-    window.addEventListener("resize", toggleDesktop, false);
-    window.addEventListener("load", getUserOnLoad, false)
+  watch(()=>layoutStore.isError, (curr, old)=>{
+    if(curr == true){
+      setTimeout(layoutStore.hideError, 3000);
+    }
+  })
+
+  onMounted(()=>{
+      window.addEventListener("resize", toggleDesktop, false);
+      window.addEventListener("load", getUserOnLoad, false)
   })
   onUnmounted(()=>{
     window.removeEventListener("resize", toggleDesktop, false)

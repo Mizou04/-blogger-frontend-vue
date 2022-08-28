@@ -1,10 +1,10 @@
 <template lang="html">
    <div class="article">
-     <div :style="{background : props.thumbnail}" class="article--img"/>
+     <div :style="{background : props.props.thumbnail}" class="article--img"/>
       <div class="article--infos">
-        <h3 class="article--title">{{props.title}}</h3>
-        <p class="article--overview">{{props.overview}}</p>
-        <router-link :to="`/article/${props.id}`" class="article--read">read content</router-link>
+        <h3 class="article--title">{{props.props.title}}</h3>
+        <p class="article--overview">{{props.props.overview}}</p>
+        <router-link :to="`/article/${props.props.id}`" class="article--read">read content</router-link>
       </div> 
     </div>
 </template>
@@ -13,7 +13,7 @@
   import {defineProps} from 'vue'
   import { IBlogPostMin } from "@/types/blogPost";
 
-  let props = defineProps<IBlogPostMin>()
+  let props = defineProps<{props : IBlogPostMin}>()
 
 
 </script>

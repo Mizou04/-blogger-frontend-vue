@@ -9,9 +9,12 @@
       </nav>
       <button class="header--toggler"><ArrowCollapseLeft/></button>
     </header>
-    <div v-for="article of articlesDom" class="homepage--body">
-      <ArticleCard :props="article"/>
-      <!-- here we get articles cards to scroll over them -->
+    <div class="homepage--body">
+      <h1 class="homepage--loader" v-if="articlesStore.articles.length">Loading...</h1>
+      <div v-for="article of articlesStore.articles" class="homepage--articles">
+        <ArticleCard :props="article"/>
+        <!-- here we get articles cards to scroll over them -->
+      </div>
     </div>
   </main>
 </template>
@@ -20,19 +23,14 @@
   import { onMounted, ShallowReactive, reactive } from "vue";
   
   import { IBlogPostMin } from "@/types/blogPost";
+  import useArticlesStore from "@/store/articles.store"
 
   import { ArrowCollapseLeft } from "mdue";
 
-  let articlesDom : ShallowReactive<IBlogPostMin[]> = reactive([]);
-  
+  let articlesStore = useArticlesStore();
+
   onMounted(async ()=>{
-    try {
-      let articles = await fetch(process.env.NODE_ENV == "development" ? "localhost:4000/articles/1-10" : "/articles/1-10");
-      let articlesJson : IBlogPostMin[] = await articles.json();
-      articlesDom.push(...articlesJson);
-    } catch (error) {
-      alert((error as Error).message);
-    }
+    await articlesStore.populateArticles()
   })
 
 </script>
@@ -50,7 +48,8 @@
     }
     &--body{
       display : block;
-      overflow-y: scroll;
+      min-height: calc(100vh - 100px);
+      overflow-y: hidden;
       &::-webkit-scrollbar{
         width : 10px;
         background : white;
@@ -63,6 +62,22 @@
           background : rgb(34, 34, 34);
         }
       }
+    }
+    &--articles{
+      overflow-y : scroll;
+      height : 100%;
+      width : 100%;
+      padding : 0px 2.5px;
+    }
+    &--loader{
+      height : 100%;
+      width : 100%;
+      background : transparent;
+      color :rgb(45, 42, 42);
+      font-weight: 100;
+      text-align: center;
+      display: flex;
+      align-items: center;
     }
   }
   .header {

@@ -68,7 +68,7 @@ const routes: Array<RouteRecordRaw> = [
     component : ArticlePage
   },
   {
-    path : '/article/new',
+    path : '/articles/new',
     name : 'createArticle',
     component : CreateArticlePage,
     // beforeEnter : (to, from)=>{
