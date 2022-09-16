@@ -7,7 +7,8 @@
     <div class="editing_page--actions">
       <button @click="cancelHandler" class="editing_page--action editing_page--action-cancel">Cancel</button>
       <button v-if="stateIndex > 0" @click="prevHandler" class="editing_page--action editing_page--action-previous">Previous</button>
-      <button @click="nextHandler" class="editing_page--action editing_page--action-confirm">{{editingState == 'preview' ? 'Confirm' : (editingState == "overview" ? 'preview text' : 'Next')}}</button>
+      <button v-if="editingState == 'preview'" @click="submitHandler" class="editing_page--action editing_page--action-confirm">Confirm</button>
+      <button v-else @click="nextHandler" class="editing_page--action editing_page--action-confirm">{{editingState == "overview" ? 'preview text' : 'Next'}}</button>
     </div>
   </div>
 </template>
@@ -45,13 +46,15 @@
       profilePic : userStore.user?.profilePic + "",
       email : userStore.user?.email + "",
       id : userStore.user?.id + "",
-      username : userStore.user?.id + ""
+      username : userStore.user?.username + ""
     },
     content : storedDataState?.content || '',
     createdAt : storedDataState?.createdAt || '',
     lastModified : storedDataState?.lastModified || '',
     overview : storedDataState?.overview || '',
-    thumbnail : storedDataState?.thumbnail || generateColor()
+    thumbnail : storedDataState?.thumbnail || generateColor(),
+    likes : {length : 0, data : new Set<string>()},
+    comments : {length : 0, data : {}},
   });
 
   function changeTitleHandler(v : string){
@@ -86,30 +89,56 @@
     }
   }
 
- function nextHandler(){
-  if(
-    ( editingState.value == "title" && (!dataState.title || dataState.title.length < 20 || dataState.title.length > 80)) ||
-    ( editingState.value == "overview" && (dataState.overview.length < 20 || dataState.overview.length > 123 )) ||
-    ( editingState.value == "editing" && (dataState.content.length < 120))
-    ){
-      if(editingState.value == "title"){
-        alert("title must be present")
-      }
-    return;
-  }
-  console.log(editingState.value)
-  if(stateIndex.value < states.length-1){
-    stateIndex.value++;
-    editingState.value = states[stateIndex.value];
-  }
+  function nextHandler(){
+    if(
+      ( editingState.value == "title" && (!dataState.title || dataState.title.length < 20 || dataState.title.length > 80)) ||
+      ( editingState.value == "overview" && (dataState.overview.length < 20 || dataState.overview.length > 123 )) ||
+      ( editingState.value == "editing" && (dataState.content.length < 120))
+      ){
+        if(editingState.value == "title"){
+          alert("title must be present")
+        }
+      return;
+    }
+    if(stateIndex.value < states.length-1){
+      stateIndex.value++;
+      editingState.value = states[stateIndex.value];
+    }
  }
- function prevHandler(){
-   if(stateIndex.value == 0) return;
-  if(stateIndex.value > 0){
-    stateIndex.value--;
-    editingState.value = states[stateIndex.value];
+  function prevHandler(){
+    if(stateIndex.value == 0) return;
+    if(stateIndex.value > 0){
+      stateIndex.value--;
+      editingState.value = states[stateIndex.value];
+    }
   }
- }
+
+
+  async function submitHandler(){
+    let dataStateString = JSON.stringify(dataState);
+    try {
+      let postReq = await fetch(process.env.NODE_ENV == "development" ? "http://localhost:4000/articles/new" : "/articles/new", 
+      {
+        body : dataStateString,
+        method : "POST", 
+        credentials : "include",
+          headers : {
+            'Accept' : 'application/json,text/html',
+            'Content-type' : 'application/json'
+          },
+          'referrer' : ''
+      });
+      let json = await postReq.json();
+      if(!/success/igm.test(json.title)){
+        throw new Error(json.msg)
+      } 
+      alert(json.msg);
+      router.replace({name : "home"});
+      sessionStorage.removeItem("dataState");
+    } catch (error) {
+      layoutStore.showError((error as Error).message);
+    }
+  }
 
 </script>
 

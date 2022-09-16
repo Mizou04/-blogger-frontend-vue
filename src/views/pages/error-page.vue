@@ -1,6 +1,6 @@
 <template lang="html">
   <h1>Error Page</h1>
-  <p>Error 403 : not authorized</p>
+  <p>Error 403 : not Found</p>
 </template>
 
 <script lang="ts" setup></script>

@@ -7,40 +7,57 @@
         </select>  
         <input placeholder="type a keyword" class="header--input header--input-search" type="search" name="search" id="">
       </nav>
-      <button class="header--toggler"><ArrowCollapseLeft/></button>
+      <!-- <button class="header--toggler"><ArrowCollapseLeft/></button> -->
     </header>
     <div class="homepage--body">
-      <h1 class="homepage--loader" v-if="articlesStore.articles.length">Loading...</h1>
-      <div v-for="article of articlesStore.articles" class="homepage--articles">
-        <ArticleCard :props="article"/>
-        <!-- here we get articles cards to scroll over them -->
-      </div>
+        <h1 ref="LoaderRef" class="homepage--loader" v-if="articlesStore.articles.length == 0">Loading...</h1>
+        <div v-else class="homepage--articles">
+          <template v-for="article in articlesStore.articles" v-bind:key="article.id" >
+            <ArticleCard :article="article"/>
+          </template>
+          <!-- here we get articles cards to scroll over them -->
+        </div>
     </div>
+    <PaginationFooter/>
   </main>
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, ShallowReactive, reactive } from "vue";
+  import { onMounted, ref, Ref, toRefs, onBeforeMount } from "vue";
   
-  import { IBlogPostMin } from "@/types/blogPost";
   import useArticlesStore from "@/store/articles.store"
+  import useLayoutStore from "@/store/layout.store"
 
   import { ArrowCollapseLeft } from "mdue";
+  import ArticleCard from "@/views/components/article-card.vue"
+  import PaginationFooter from "@/views/components/pagination-footer.vue"
+
 
   let articlesStore = useArticlesStore();
+  let LoaderRef : Ref<HTMLDivElement | undefined> = ref();
 
-  onMounted(async ()=>{
-    await articlesStore.populateArticles()
+  onBeforeMount(async ()=>{
+    await articlesStore.populateArticles();
+    let timeout = setTimeout(()=>{
+      (LoaderRef.value as HTMLDivElement).innerText = "No Results"
+    }, 5000)
+
+    return new Promise<void>((resolve)=>{
+      if((articlesStore.articles.length) > 0){
+        resolve();
+        clearTimeout(timeout);
+      }
+    })
   })
 
 </script>
 
 <style scoped lang="scss">
   .homepage{
-    height : calc(100% - 50px);
+    height : calc(100% - 80px);
     width : 100vw;
     background : white;
-    overflow: hidden;
+    // overflow: hidden;
     &--header{
       height : 45px;
       width : 100%;
@@ -48,7 +65,8 @@
     }
     &--body{
       display : block;
-      min-height: calc(100vh - 100px);
+      height: calc(100%);
+      width : 100%;
       overflow-y: hidden;
       &::-webkit-scrollbar{
         width : 10px;
@@ -65,19 +83,20 @@
     }
     &--articles{
       overflow-y : scroll;
-      height : 100%;
+      height : calc(100% - 0px);
       width : 100%;
       padding : 0px 2.5px;
     }
     &--loader{
-      height : 100%;
-      width : 100%;
-      background : transparent;
+      height : calc(100% - 40px);
+      // width : 100%;
+      // background : transparent;
       color :rgb(45, 42, 42);
       font-weight: 100;
-      text-align: center;
       display: flex;
+      justify-content : center;
       align-items: center;
+      text-align: center;
     }
   }
   .header {

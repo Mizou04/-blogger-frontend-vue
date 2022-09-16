@@ -71,20 +71,18 @@ const routes: Array<RouteRecordRaw> = [
     path : '/articles/new',
     name : 'createArticle',
     component : CreateArticlePage,
-    // beforeEnter : (to, from)=>{
-    //   const userStore = useUserStore();
-    //   if(!userStore?.user?.id){
-    //     return {name : "signup"}
-    //   }
-    // }
-  }
-  // {
-  //   path : "/*",
-  //   name : "unknown",
-  //   component : defineComponent({
-  //     template : "<div>Error not found</div>"
-  //   })
-  // }
+    beforeEnter : (to, from)=>{
+     const userStore = useUserStore();
+     if(!userStore?.user?.id){
+       return {name : "signup"}
+     }
+   }
+  }, 
+ {
+  path : "/:pathMatch(.*)*",
+  name : "unknown",
+  component : ErrorPage
+ }
 ]
 
 const router = createRouter({

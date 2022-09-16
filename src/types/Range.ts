@@ -31,7 +31,7 @@ export class Range{
     return new Range(range.to+1, range.to + (range.to - range.from) + 1);
   }
   static previous(range : Range) : Range{
-    let newRange = new Range(range.from - (range.to - range.from)-1, range.to - (range.to - range.from)-1)
+    const newRange = new Range(range.from - (range.to - range.from)-1, range.to - (range.to - range.from)-1)
     Range.equalize(newRange);
     return newRange; 
   }

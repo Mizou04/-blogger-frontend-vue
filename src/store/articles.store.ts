@@ -14,6 +14,9 @@ type TState = {
 interface TActions extends _ActionsTree{
   populateArticles(page? : number): Promise<void>,
   restoreState() : void,
+  previousPage() : void,
+  nextPage(): void,
+  goToPage(page : number): void
 }
 
 export default defineStore<string, TState, any, TActions>("articles", {
@@ -27,21 +30,26 @@ export default defineStore<string, TState, any, TActions>("articles", {
   },
   actions : {
     async populateArticles(page? : number) : Promise<void>{
+      this.articles = [];
       this.range = Range.goTo(page || this.page, this.range);
-      let layoutStore = useLayoutStore();
+      const layoutStore = useLayoutStore();
       try {
-        let timeout : number = setTimeout(()=>{
-          throw new Error("Request Timeout");
-        }, 1e4);
-        let response = await fetch(process.env.NODE_ENV == "development" ?`http://localhost:4000/articles/${this.range.from}-${this.range.to}` : `/articles/${this.range.from}-${this.range.to}`);
-        let json : {data : IBlogPostMin[], overAllLength : number} = await response.json();
-        this.overallLength = json.overAllLength;
+        
+        const response = await fetch(process.env.NODE_ENV == "development" ?`http://localhost:4000/articles/${this.range.from}-${this.range.to}` : `/articles/${this.range.from}-${this.range.to}`);
+        const json : {data : IBlogPostMin[], overAllLength : number} = await response.json();
         this.articles = json.data;
-        if(this.overallLength > 0){
-          clearTimeout(timeout);
+        this.overallLength = json.overAllLength;
+        if(this.overallLength == 0){
+          throw new Error("NO DATA")
         }
+
+        
       } catch (error) {
-        layoutStore.showError((error as Error).message);
+        let message = (error as Error).message;
+        if(/^failed to fetch$/igm.test(message)){
+          message = "Internet Connection Error "
+        }
+        layoutStore.showError(message)
       }
     },
     restoreState(){
@@ -49,6 +57,21 @@ export default defineStore<string, TState, any, TActions>("articles", {
       this.articles = [];
       this.range = {from : 1, to : 10};
       this.page = 1;
+    },
+    previousPage(){
+      if(this.page == 1) return;
+      this.page--;
+    },
+    nextPage(){
+      const totalPageNumber = this.overallLength / (this.range.to - this.range.from + 1);
+      if(this.page == totalPageNumber) return;
+      this.page++;
+    },
+    goToPage(page : number){
+      const totalPageNumber = this.overallLength / (this.range.to - this.range.from + 1);
+      if(page <= 0) return;
+      if(page > totalPageNumber) return;
+      this.page = page;
     }
   }
 })

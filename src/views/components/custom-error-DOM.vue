@@ -16,7 +16,7 @@ import {useRoute} from "vue-router"
   }>()
 
 onMounted(()=>{
-  console.log(history.state)
+  console.log('hiiiiii')
 })
 
 </script>
@@ -27,15 +27,19 @@ onMounted(()=>{
     text-align: center;
     border : 2px rgb(220, 3, 3) solid;
     position : fixed;
-    top : 0;
+    display : flex;
+    justify-content : center; 
+    align-items : center;
+    top : 40px;
     left : 0;
-    height : 40px;
+    height : 80px;
     width : 100vw;
+    z-index : 1000000;
     &--msg{
       color : rgb(220, 3, 3);
       font-size: 1.1em;
       width : 100%;
-      height : 100%;
+      height : auto;
     }
   }
 </style>

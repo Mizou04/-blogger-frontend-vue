@@ -15,10 +15,10 @@
   const userStore = useUserStore();
   const loginErrorMsg = ref(userStore.loginErrorMsg);
   const router = useRouter();
-  const user = ref(userStore.user)
+  const user = userStore.user;
   
   watch(()=>user,(nUser, oUser)=>{
-    if(nUser.value == oUser?.value) return; 
+    if(nUser == oUser) return; 
     else {
       router.push("/");
     }

@@ -28,10 +28,6 @@
     lengthLeft.value = maxLength.value - value.length;
   }
 
-  onMounted(() => {
-    console.log(props.text)
-  })
-
 </script>
 
 <style scoped lang="scss">

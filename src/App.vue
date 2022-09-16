@@ -1,5 +1,5 @@
 <template lang="html">
-    <teleport to="body" v-if="layoutStore.isError">
+    <teleport to='body' v-if="layoutStore.isError">
       <CustomErrorDOM :msg="layoutStore.errorMsgDOM"/>
     </teleport>
     <Header/>
@@ -14,8 +14,12 @@
   import {onMounted, onUnmounted, ref, reactive, watch} from "vue"
   import { storeUser, deleteUser } from "@/helpers/storage.helpers";
 
+  import CustomErrorDOM from "@/views/components/custom-error-DOM.vue"
+
+
   let layoutStore = useLayoutStore();
   let userStore = useUserStore();
+
 
   function toggleDesktop(e: UIEvent){
     layoutStore.toggleDesktop();
@@ -25,7 +29,7 @@
     try{
       await userStore.getUserLogin(window);
     } catch(e){
-      console.log(e)
+      return;
     }
   }
 

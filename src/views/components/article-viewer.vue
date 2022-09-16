@@ -19,7 +19,7 @@
       {{source.owner.username}}
       </a>
       </span>
-      <p><CommentPlus/> 0 <ThumbUp/> 0</p>
+      <p> <ThumbUp/> {{source.likes.length}}</p>
     </div>
 
     <!-- Date --> <!-- AUTHOR --> <!-- Comments + Likes -->
@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { defineProps, ref, onMounted, Ref } from "vue";
+  import { defineProps, ref, watch, onMounted, onBeforeMount, Ref, reactive } from "vue";
   import { IBlogPost } from "@/types/blogPost";
   import { LabelMultiple, Clock, CommentPlus, ThumbUp, GreasePencil } from "mdue";
   import Quill from "quill"
@@ -41,15 +41,19 @@
   let props = defineProps<{
     source : IBlogPost
   }>();
-  let contentRef : Ref<HTMLDivElement | null> = ref(null) ;
-  onMounted(()=>{
-    let _editor = new Quill("#_helper");
-    // _editor.disable();
-    _editor.setContents(JSON.parse(props.source.content), "api");
-      (contentRef.value as HTMLDivElement).innerHTML = _editor.root.innerHTML
-    // if(props.source.content.match('{"ops"')){
-    // }
+
+  let _editor : any;
+  let contentRef : Ref<HTMLDivElement | undefined> = ref() ;
+  
+  
+  onMounted(async ()=>{
+    _editor = new Quill("#_helper");
+    _editor.setContents(JSON.parse(props.source?.content));
+    (contentRef.value as HTMLDivElement).innerHTML = _editor.root.innerHTML
   })
+
+
+
 
 </script>
 

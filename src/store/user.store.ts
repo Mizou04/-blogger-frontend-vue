@@ -20,8 +20,8 @@ interface Actions extends _ActionsTree{
 export default defineStore<string, State, _GettersTree<State>, Actions>('user', {
   state(){
     return {
-      // user :JSON.parse(window.sessionStorage.getItem("user") as string) || this.actions?.getUserCredentials() || {name : "", email : "", username : "", id : "", joinedAt : "", lastModified : "", providerId : ""},
       user : null,
+      // user : {},
       urls : {
         google : "http://localhost:4000/authentication/google",
         // google : "/response",
@@ -35,7 +35,7 @@ export default defineStore<string, State, _GettersTree<State>, Actions>('user', 
     },
     async getUserLogin(win : Window) : Promise<void>{
       try {
-        const req = await win.fetch("http://localhost:4000/", 
+        const req = await win.fetch("http://localhost:4000/authentication/user", 
         {
           credentials : "include",
           headers : {
@@ -45,7 +45,7 @@ export default defineStore<string, State, _GettersTree<State>, Actions>('user', 
         }
         );
         const res = await req.json();
-        if((res.user as IUser)?.id && (res.user as IUser)?.username){
+        if((res.data.user as IUser)?.id && (res.data.user as IUser)?.username){
           this.setUser(res.user);
         } 
       } catch (error) {

@@ -12,7 +12,7 @@ export interface IBlogPost{
   owner : IOwner,
   likes : {
     length : number,
-    data : Record<string, string>
+    data : Set<string>
   },
   comments : {
     length : number,
@@ -26,7 +26,8 @@ export interface IBlogPostMin{
   thumbnail : string,
   overview : string,
   likes : {
-    length : number
+    length : number,
+    data : Set<string>
   },
   comments : {
     length : number

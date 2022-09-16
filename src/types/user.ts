@@ -1,3 +1,5 @@
+import {IBlogPostMin} from "./blogPost";
+
 export interface IUser{
   readonly profilePic?: string;
   readonly coverPic?: string;
@@ -8,5 +10,5 @@ export interface IUser{
   readonly email : string;
   readonly joinedAt? : string;
   readonly lastModified? : string;
-  readonly blogPosts?: Record<string, {id : string, title : string, overview : string}> | null;
+  readonly blogPosts?: Record<string, IBlogPostMin> | null;
 }

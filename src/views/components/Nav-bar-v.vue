@@ -4,6 +4,7 @@
     <router-link to="/about" class="navbar--link">About</router-link>
     <router-link to="/users" class="navbar--link">Find Author</router-link>
     <router-link to="/links" class="navbar--link">Links</router-link>
+    <router-link to="/articles/new" class="navbar--link">New Article</router-link>
   </nav>
 </template>
 

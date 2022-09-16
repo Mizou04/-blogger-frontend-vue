@@ -1,28 +1,26 @@
 <template lang="html">
-  <teleport to='body' v-if="layoutStore.isError">
-    <ErrorDom :msg="layoutStore.errorMsgDOM"/>
-  </teleport>
   <div class="profile">
     <img :src="userCoverPic" alt="" class="profile--cover" v-if="userCoverPic">
     <div class="profile--cover" :style="{background : coverColor}" v-else></div>
     <div class="profile--card">
-      <h3 class="profile--name">{{user?.name}}</h3>
+      <h3 class="profile--name">{{user?.username}}</h3>
       <img src="" alt="" class="profile--pic">
       <p class="profile--status">Lorem ipsum dolor sit amet consectetur adipisicing.</p>
-      <p class="profile--joined">member since {{new Date(user?.joinedAt!).getUTCMonth() + "/" + new Date(user?.joinedAt!).getUTCFullYear()}}</p>
+      <p class="profile--joined">member since {{(user?.joinedAt as string).slice(4, (user?.joinedAt as string).indexOf(" ", 14)).split(" ").join("-")}}</p>
+      <button class="profile--edit">Edit infos <FileEdit/></button>
     </div>
     <div class="profile--articles">
       <div class="articles--caroussel">
-       <ArticleCard :props="fakeArticleProps"/>
-       <ArticleCard :props="fakeArticleProps"/>
-       <ArticleCard :props="fakeArticleProps"/>
+       <ArticleCard v-for="post of user?.blogPosts" :key="post.id" :article="post"/>
       </div>
     </div>
   </div>
 </template>
 
 
-<script lang="ts" setup async>
+<script lang="ts" setup>
+  import { FileEdit } from "mdue";
+
   import ArticleCard from "@/views/components/article-card.vue";
   import ErrorDOM from "@/views/components/custom-error-DOM.vue";
   import useUserStore from "@/store/user.store";
@@ -51,8 +49,8 @@
         }
         );
         const res = await req.json();
-        if((res as IUser).id){
-          user.value = res;
+        if((res.data as IUser).id){
+          user.value = res.data;
         } else {
           throw "user id not valid"
         }
@@ -72,16 +70,6 @@
   }
 
 
-let fakeArticleProps = {
-  id : "123",
-  title : "articlessssssssssssssssssssssssss1",
-  subtitle : "some content",
-  thumbnail : "#32f",
-  overview : "hell",
-  likes : {length : 12},
-  comments : {length : 5},
-  createdAt : new Date("2015-09-03").toDateString()
-}
 
 </script>
 
