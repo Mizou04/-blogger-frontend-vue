@@ -48,7 +48,7 @@
   
   onMounted(async ()=>{
     _editor = new Quill("#_helper");
-    _editor.setContents(JSON.parse(props.source?.content));
+    _editor.setContents(/ops:/igm.test(props.source?.content) ? JSON.parse(props.source?.content) : props.source.content);
     (contentRef.value as HTMLDivElement).innerHTML = _editor.root.innerHTML
   })
 

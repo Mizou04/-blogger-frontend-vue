@@ -4,15 +4,7 @@
     <template v-if="layoutStore.isDesktop">
       <Navbar/>
       <div class="header--actions">
-        <div  v-if="userStore.user">
-          <router-link to="/my-profile" v-slot="{navigate}">
-            <a @click="navigate" class="header--profile">
-              my profile
-            </a>
-          </router-link>
-          <LogoutButton/>
-        </div>
-        
+        <UserAccordion :name="userStore.user.username" v-if="userStore.user?.id"/>
         <router-link v-else to="/login" v-slot="{navigate}">
           <button  @click="navigate" class="header--login">
             Get Started!
@@ -21,7 +13,12 @@
       </div>
     </template>
     <template v-else>
+      <div class="header--actions">
+      <router-link v-if="userStore.user?.id" to="/my-profile" style="margin-right: 10px;" v-slot="{navigate}">
+        <img @click="navigate" class="header--profile"/>
+      </router-link>
       <Menu class="header--burger"></Menu>
+      </div>
       <Drawer :isOpen="layoutStore.drawerIsOpen"></Drawer>
     </template>
   </header>
@@ -30,12 +27,12 @@
 <script lang="ts" setup>
   import Navbar from "./Nav-bar-v.vue"
   import {Menu} from "mdue"
-  import {ref, reactive, onMounted, onUnmounted} from "vue"
+  import {ref, reactive, onMounted, onUnmounted, watch} from "vue"
+  import { storeToRefs } from "pinia";
   import useLayoutStore from "@/store/layout.store"
   import useUserStore from "@/store/user.store"
   import Drawer from "./drawer.vue"
-  import LogoutButton from "./logout-button.vue"
-
+  import UserAccordion from "./user-accordion.vue";
 
   let layoutStore = useLayoutStore();
   const userStore = useUserStore();
@@ -48,6 +45,7 @@
         return layoutStore.closeDrawer();
       }
     }
+
 
   onMounted(()=>{
     window.addEventListener('click', drawerHandler)
@@ -83,9 +81,18 @@
       border : none;
       box-shadow : 0px 2px 4px rgba(0, 0, 9, 0.146);
     }
+    &--actions{
+      display  : flex;
+      justify-content: space-around;
+      align-items: center;
+    }
     &--profile{
-      padding : 7px 45px;
-      font-weight: 600;
+      width : 30px;
+      height : 30px;
+      border-radius: 50%;
+      box-shadow: S.$shadow;
+      margin-left: -10px;
+      padding : 0;
     }
   }
   .drawer_transition-leave-active{

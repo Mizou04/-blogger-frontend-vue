@@ -6,12 +6,14 @@ import { IUser } from "@/types/user";
 
 interface State{
   readonly user : IUser | null,
+  readonly isNewUser : boolean,
   readonly urls : {google : string , facebook : string},
 }
 
 
 interface Actions extends _ActionsTree{
   setUser(user : IUser | null) : void, 
+  setIsNewUser(isNewUser : boolean) : void, 
   getUserLogin(win : Window) : Promise<void>,
   // loginUser(win : Window, strategy : 'google' | 'facebook') : Promise<void>,
 }
@@ -21,6 +23,7 @@ export default defineStore<string, State, _GettersTree<State>, Actions>('user', 
   state(){
     return {
       user : null,
+      isNewUser : false,
       // user : {},
       urls : {
         google : "http://localhost:4000/authentication/google",
@@ -31,9 +34,14 @@ export default defineStore<string, State, _GettersTree<State>, Actions>('user', 
   },
   actions: {
     setUser(user : IUser){
-      this.$state = {...this.state, user : user};
+      this.$state = {...this.state, user};
     },
+    setIsNewUser(isNewUser : boolean){
+      this.$state = {...this.state, isNewUser};
+    }
+    ,
     async getUserLogin(win : Window) : Promise<void>{
+      const layoutStore = useLayoutStore();
       try {
         const req = await win.fetch("http://localhost:4000/authentication/user", 
         {
@@ -45,10 +53,16 @@ export default defineStore<string, State, _GettersTree<State>, Actions>('user', 
         }
         );
         const res = await req.json();
-        if((res.data.user as IUser)?.id && (res.data.user as IUser)?.username){
-          this.setUser(res.user);
-        } 
+        if((res.data as IUser)?.id && (res.data as IUser)?.username){
+          this.setUser(res.data);
+          this.setIsNewUser(res.isNewUser);
+        } else {
+          throw new Error("No User object in response")
+        }
       } catch (error) {
+		if(!/user/igm.test((error as Error).message)){
+			layoutStore.showError((error as Error).message)
+		}
         // console.log(error)
       }
     }

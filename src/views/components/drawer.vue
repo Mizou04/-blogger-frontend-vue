@@ -5,7 +5,8 @@
           <div class="drawer--content">
             <Navbar/>
             <div class="drawer--actions">
-              <router-link to="/login" v-slot="{navigate}">
+              <LogoutButton v-if="userStore.user?.id"/>
+              <router-link to="/login" v-else v-slot="{navigate}">
                 <button  @click="navigate" class="drawer--login">
                   Get started!
                 </button>
@@ -22,8 +23,11 @@
   import Navbar from "./Nav-bar-v.vue"
   import {ref, defineProps, onMounted, onUnmounted} from "vue"
   import useLayoutStore from "@/store/layout.store"
-  
+  import LogoutButton from "./logout-button.vue";
+  import useUserStore from "@/store/user.store"
+
   let body = document.body;
+  const userStore = useUserStore();
 
   defineProps<{isOpen : boolean}>()
 
@@ -48,6 +52,7 @@
     }
     &--actions{
       text-align: center;
+      margin-top: 70px;
     }
     &--login{
       padding : 7px 35px;
@@ -76,7 +81,7 @@
   .drawer_transition-enter-to{
     left : 0;
     opacity : 1;
-    animation : bounce-in 0.5s;
+    // animation : bounce-in 0.5s;
   }
 
   @keyframes bounce-in {

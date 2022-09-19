@@ -1,14 +1,5 @@
 <template lang="html">
   <main class="homepage">
-    <header class="homepage--header">
-      <nav class="header--nav">
-        <!-- for filtering and searching -->
-        <select class="header--select header--select-filter" type="search" name="search">
-        </select>  
-        <input placeholder="type a keyword" class="header--input header--input-search" type="search" name="search" id="">
-      </nav>
-      <!-- <button class="header--toggler"><ArrowCollapseLeft/></button> -->
-    </header>
     <div class="homepage--body">
         <h1 ref="LoaderRef" class="homepage--loader" v-if="articlesStore.articles.length == 0">Loading...</h1>
         <div v-else class="homepage--articles">

@@ -4,7 +4,6 @@
     <router-link to="/about" class="navbar--link">About</router-link>
     <router-link to="/users" class="navbar--link">Find Author</router-link>
     <router-link to="/links" class="navbar--link">Links</router-link>
-    <router-link to="/articles/new" class="navbar--link">New Article</router-link>
   </nav>
 </template>
 
@@ -13,24 +12,25 @@
 </script>
 
 <style lang="scss" scoped>
-  @import "@/views/scss/scheme";
+  @use "@/views/scss/scheme" as S;
   .navbar{
     text-align: center;
     &--link{
       width : fit-content;
       margin : 20px auto;
       display : block;
-      padding : 8px 10px;
+      padding : 8px 30px;
       color : black;
       text-decoration : none;
       cursor : pointer;
+      border-radius: 4px;
     } 
   }
   .router-link-active{
     color : black;
     background : white;
-    border : 2px black solid;
-    box-shadow : 1px 5px 15px rgba(0, 0, 0, 0.2);
+    border : 1px rgba(#000000, .5) solid;
+    box-shadow : S.$shadow;
   }
 
 

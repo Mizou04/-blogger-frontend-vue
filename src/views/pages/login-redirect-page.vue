@@ -13,9 +13,8 @@
   const router = useRouter();
 
   onMounted(async ()=> {
-    let myOpener = (opener || window);
     try{
-      await userStore.getUserLogin(myOpener);
+      await userStore.getUserLogin(opener || window);
     } catch(e){
       console.log(e)
     }

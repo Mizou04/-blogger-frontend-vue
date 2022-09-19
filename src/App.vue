@@ -16,7 +16,6 @@
 
   import CustomErrorDOM from "@/views/components/custom-error-DOM.vue"
 
-
   let layoutStore = useLayoutStore();
   let userStore = useUserStore();
 
@@ -65,6 +64,9 @@
     font-size: 16px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serifi;
     overflow-x: hidden;
+  }
+  button{
+    cursor : pointer;
   }
   #app{
     height: 100vh;

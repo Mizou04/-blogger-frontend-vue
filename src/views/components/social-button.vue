@@ -3,31 +3,50 @@
 </template>
 
 <script lang="ts" setup>
-  import {defineProps, ref, onMounted, onUnmounted, watch} from "vue";
+  import {defineProps, ref, Ref, onMounted, watch} from "vue";
   import {useRoute, useRouter} from "vue-router"
   import useUserStore from "@/store/user.store";
   import useLayoutStore from "@/store/layout.store";
+  import {storeToRefs} from "pinia"
 
   const state = defineProps<{social : "google" | "facebook"}>();
-  let popupWindow : Window;
+  let popupWindow : Ref<Window | null> = ref(null);
   const popupWindowParams = "scrollbars=1,height=600,width=500,titlebar=1,menubar=1,top=30";
   
   const router = useRouter();
   const userStore = useUserStore();
   const layoutStore = useLayoutStore();
-  const urls = userStore.urls;
 
   function clickHandler(e : MouseEvent){
     layoutStore.hideError();
     if(state.social == "google"){
-      popupWindow = window.open(userStore.urls.google, "_blank", popupWindowParams) as Window;
-      if(!popupWindow?.opener){
-        popupWindow.opener = window;
-        popupWindow.focus();
+      popupWindow.value = window.open(userStore.urls.google, "_blank", popupWindowParams) as Window;
+      if(!popupWindow.value?.opener){
+        popupWindow.value.opener = window;
+        popupWindow.value.focus();
       }
     }
+    let int = setInterval(async ()=>{
+      if(popupWindow.value?.closed){
+        await userStore.getUserLogin(window);
+        userStore.isNewUser ? router.replace("/my-profile") : router.replace("/");
+        // userStore.isNewUser && userStore.setIsNewUser(false);
+        clearInterval(int);
+      }
+    }, 1000)
+    
   }
-  
+
+  // onMounted(()=>{
+  //   let int = setInterval(()=>{
+  //     if(popupWindow.value?.closed){
+  //       userStore.getUserLogin(window);
+  //       userStore.isNewUser ? router.replace("/my-profile") : router.replace("/");
+  //       userStore.isNewUser && userStore.setIsNewUser(false);
+  //       clearInterval(int);
+  //     }
+  //   }, 1000)
+  // })  
 
 </script>
 

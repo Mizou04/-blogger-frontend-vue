@@ -36,7 +36,7 @@
 
   let route = useRoute();
   let loginStore = userStore();
-  let isLoginPage = ref(route.path.match('login'));
+  let isLoginPage = ref(/login/ig.test(route.path));
   let msg : {[ket : string] : string} = {};
     
   let formState = reactive({
@@ -54,9 +54,9 @@
   let usernameRef = ref();
 
   watch(()=> route.path, (newPath)=>{
-    if(newPath.match('login')){
+    if(/login/igm.test(newPath)){
       isLoginPage.value = true
-    } else if(newPath.match('signup')){
+    } else if(/signup/igm.test(newPath)){
       isLoginPage.value = false;
     }
       formState.email = "";
@@ -170,7 +170,7 @@
       color : white;
       font-weight: 100;
       font-size: .9em;
-      background : $buttons--color-active;
+      background : $buttons--color-cta;
       border : 1px rgba(255, 255, 255, 0.333) solid;
       box-shadow : 1px 2px 10px 2px rgba(16, 17, 23, 0.164);
       transition : all 0.123s 0s ease-in;
